@@ -1,0 +1,10 @@
+package com.inflexionco.glidebrowser.domain.model
+
+data class Bookmark(
+    val id: Long = 0,
+    val title: String,
+    val url: String,
+    val faviconUrl: String? = null,
+    val createdAt: Long = System.currentTimeMillis(),
+    val folderId: Long? = null
+)
