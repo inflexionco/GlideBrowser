@@ -52,6 +52,7 @@ fun TvLoadingIndicator(
 /**
  * Compact loading indicator for inline use
  */
+@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun TvCompactLoadingIndicator(
     modifier: Modifier = Modifier

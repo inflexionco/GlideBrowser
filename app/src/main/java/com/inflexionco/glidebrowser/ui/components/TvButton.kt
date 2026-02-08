@@ -52,7 +52,7 @@ fun TvButton(
         ),
         border = ButtonDefaults.border(
             focusedBorder = Border(
-                border = androidx.tv.material3.Border.Stroke(
+                border = androidx.compose.foundation.BorderStroke(
                     width = Dimens.focusBorderWidth,
                     color = MaterialTheme.colorScheme.border
                 )
@@ -114,7 +114,7 @@ fun TvCompactButton(
         ),
         border = ButtonDefaults.border(
             focusedBorder = Border(
-                border = androidx.tv.material3.Border.Stroke(
+                border = androidx.compose.foundation.BorderStroke(
                     width = Dimens.focusBorderWidth,
                     color = MaterialTheme.colorScheme.border
                 )
