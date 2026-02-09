@@ -3,6 +3,7 @@ package com.inflexionco.glidebrowser.ui.components
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -36,10 +37,16 @@ fun TvIconButton(
         modifier = modifier.size(Dimens.iconSize),
         enabled = enabled,
         colors = IconButtonDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            focusedContainerColor = MaterialTheme.colorScheme.primary,
-            focusedContentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            focusedContentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        shape = IconButtonDefaults.shape(
+            shape = CircleShape,
+            focusedShape = CircleShape,
+            pressedShape = CircleShape,
+            disabledShape = CircleShape
         ),
         scale = IconButtonDefaults.scale(
             focusedScale = Dimens.focusedScale
@@ -48,8 +55,9 @@ fun TvIconButton(
             focusedBorder = Border(
                 border = androidx.compose.foundation.BorderStroke(
                     width = Dimens.focusBorderWidth,
-                    color = MaterialTheme.colorScheme.border
-                )
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                ),
+                shape = CircleShape
             )
         ),
         interactionSource = interactionSource

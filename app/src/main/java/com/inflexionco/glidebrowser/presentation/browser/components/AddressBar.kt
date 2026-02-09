@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -55,6 +56,7 @@ fun AddressBar(
     onStopClick: () -> Unit,
     onHomeClick: () -> Unit,
     onTabsClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var textFieldValue by remember(url) { mutableStateOf(url) }
@@ -70,6 +72,13 @@ fun AddressBar(
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacing8),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Tabs button - View all open tabs
+        TvIconButton(
+            onClick = onTabsClick,
+            icon = Icons.Default.List,
+            contentDescription = "Tabs"
+        )
+
         // Back button
         TvIconButton(
             onClick = onBackClick,
@@ -84,13 +93,6 @@ fun AddressBar(
             icon = Icons.Default.ArrowForward,
             contentDescription = "Go forward",
             enabled = canGoForward
-        )
-
-        // Refresh/Stop button
-        TvIconButton(
-            onClick = if (isLoading) onStopClick else onRefreshClick,
-            icon = if (isLoading) Icons.Default.Close else Icons.Default.Refresh,
-            contentDescription = if (isLoading) "Stop loading" else "Refresh"
         )
 
         // Home button
@@ -156,21 +158,18 @@ fun AddressBar(
             )
         }
 
-        // Tabs button
+        // Refresh/Stop button
         TvIconButton(
-            onClick = onTabsClick,
-            icon = Icons.Default.Menu,
-            contentDescription = "Tabs"
+            onClick = if (isLoading) onStopClick else onRefreshClick,
+            icon = if (isLoading) Icons.Default.Close else Icons.Default.Refresh,
+            contentDescription = if (isLoading) "Stop loading" else "Refresh"
         )
 
-        // Search/Go button
+        // Menu button - Settings, Bookmarks, History, etc.
         TvIconButton(
-            onClick = {
-                onUrlSubmit(textFieldValue)
-                isEditing = false
-            },
-            icon = Icons.Default.Search,
-            contentDescription = "Go"
+            onClick = onMenuClick,
+            icon = Icons.Default.Menu,
+            contentDescription = "Menu"
         )
     }
 

@@ -21,6 +21,7 @@ import com.inflexionco.glidebrowser.presentation.browser.components.PageLoadingI
 fun EnhancedBrowserScreen(
     initialUrl: String = "https://www.google.com",
     onNavigateToTabs: () -> Unit = {},
+    onNavigateToMenu: () -> Unit = {},
     modifier: Modifier = Modifier,
     webViewViewModel: WebViewViewModel = hiltViewModel()
 ) {
@@ -51,7 +52,8 @@ fun EnhancedBrowserScreen(
             onRefreshClick = { webViewViewModel.reload() },
             onStopClick = { webViewViewModel.stopLoading() },
             onHomeClick = { webViewViewModel.loadUrl("https://www.google.com") },
-            onTabsClick = onNavigateToTabs
+            onTabsClick = onNavigateToTabs,
+            onMenuClick = onNavigateToMenu
         )
 
         // Loading Progress Indicator
