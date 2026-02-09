@@ -83,4 +83,8 @@ private fun configureWebView(webView: WebView) {
 
     // Enable hardware acceleration
     webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null)
+
+    // Disable focus for TV - allows D-pad navigation to reach buttons
+    webView.isFocusable = false
+    webView.isFocusableInTouchMode = false
 }
