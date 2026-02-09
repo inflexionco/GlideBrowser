@@ -7,7 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.inflexionco.glidebrowser.presentation.browser.BrowserScreen
+import com.inflexionco.glidebrowser.presentation.browser.EnhancedBrowserScreen
 import com.inflexionco.glidebrowser.presentation.home.HomeScreen
+import com.inflexionco.glidebrowser.presentation.tabs.TabSwitcherScreen
 
 @Composable
 fun NavGraph(
@@ -29,10 +31,26 @@ fun NavGraph(
 
         composable<Routes.Browser> { backStackEntry ->
             val browserRoute: Routes.Browser = backStackEntry.toRoute()
-            BrowserScreen(
-                initialUrl = browserRoute.url,
-                onNavigateBack = {
-                    navController.popBackStack()
+            EnhancedBrowserScreen(
+                initialUrl = browserRoute.url ?: "https://www.google.com",
+                onNavigateToTabs = {
+                    navController.navigate(Routes.TabSwitcher)
+                }
+            )
+        }
+
+        composable<Routes.TabSwitcher> {
+            TabSwitcherScreen(
+                onTabSelect = { tabId ->
+                    // Switch to the selected tab
+                    navController.navigate(Routes.Browser(null)) {
+                        popUpTo(Routes.Home) { inclusive = false }
+                    }
+                },
+                onNewTab = {
+                    navController.navigate(Routes.Browser("https://www.google.com")) {
+                        popUpTo(Routes.Home) { inclusive = false }
+                    }
                 }
             )
         }

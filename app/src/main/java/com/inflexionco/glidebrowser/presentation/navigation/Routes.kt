@@ -12,6 +12,9 @@ sealed class Routes {
     data class Browser(val url: String? = null) : Routes()
 
     @Serializable
+    data object TabSwitcher : Routes()
+
+    @Serializable
     data object Settings : Routes()
 
     @Serializable
