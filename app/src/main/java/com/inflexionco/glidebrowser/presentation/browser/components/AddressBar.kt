@@ -18,10 +18,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +38,7 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.inflexionco.glidebrowser.ui.components.TvIconButton
+import com.inflexionco.glidebrowser.ui.components.TvTabIconButton
 import com.inflexionco.glidebrowser.ui.theme.Dimens
 
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -49,6 +48,7 @@ fun AddressBar(
     isLoading: Boolean,
     canGoBack: Boolean,
     canGoForward: Boolean,
+    tabCount: Int = 1,
     onUrlSubmit: (String) -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
@@ -72,11 +72,11 @@ fun AddressBar(
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacing8),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Tabs button - View all open tabs
-        TvIconButton(
+        // Tabs button - View all open tabs (Chrome-style with count)
+        TvTabIconButton(
             onClick = onTabsClick,
-            icon = Icons.Default.List,
-            contentDescription = "Tabs"
+            tabCount = tabCount,
+            contentDescription = "Tabs ($tabCount)"
         )
 
         // Back button

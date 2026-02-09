@@ -15,6 +15,7 @@ import com.inflexionco.glidebrowser.domain.model.WebViewEvent
 import com.inflexionco.glidebrowser.presentation.browser.components.AddressBar
 import com.inflexionco.glidebrowser.presentation.browser.components.GlideWebView
 import com.inflexionco.glidebrowser.presentation.browser.components.PageLoadingIndicator
+import com.inflexionco.glidebrowser.presentation.tabs.TabViewModel
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -23,10 +24,12 @@ fun EnhancedBrowserScreen(
     onNavigateToTabs: () -> Unit = {},
     onNavigateToMenu: () -> Unit = {},
     modifier: Modifier = Modifier,
-    webViewViewModel: WebViewViewModel = hiltViewModel()
+    webViewViewModel: WebViewViewModel = hiltViewModel(),
+    tabViewModel: TabViewModel = hiltViewModel()
 ) {
     val webViewState by webViewViewModel.webViewState.collectAsState()
     val event by webViewViewModel.events.collectAsState()
+    val tabState by tabViewModel.state.collectAsState()
 
     // Load initial URL
     LaunchedEffect(Unit) {
@@ -46,6 +49,7 @@ fun EnhancedBrowserScreen(
             isLoading = webViewState.isLoading,
             canGoBack = webViewState.canGoBack,
             canGoForward = webViewState.canGoForward,
+            tabCount = tabState.tabs.size,
             onUrlSubmit = { webViewViewModel.loadUrl(it) },
             onBackClick = { webViewViewModel.goBack() },
             onForwardClick = { webViewViewModel.goForward() },
