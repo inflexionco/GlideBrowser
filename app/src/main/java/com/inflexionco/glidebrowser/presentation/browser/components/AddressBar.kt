@@ -14,11 +14,11 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +56,7 @@ fun AddressBar(
     onStopClick: () -> Unit,
     onHomeClick: () -> Unit,
     onTabsClick: () -> Unit = {},
+    onNewTabClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -72,30 +73,7 @@ fun AddressBar(
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacing8),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Tabs button - View all open tabs (Chrome-style with count)
-        TvTabIconButton(
-            onClick = onTabsClick,
-            tabCount = tabCount,
-            contentDescription = "Tabs ($tabCount)"
-        )
-
-        // Back button
-        TvIconButton(
-            onClick = onBackClick,
-            icon = Icons.Default.ArrowBack,
-            contentDescription = "Go back",
-            enabled = canGoBack
-        )
-
-        // Forward button
-        TvIconButton(
-            onClick = onForwardClick,
-            icon = Icons.Default.ArrowForward,
-            contentDescription = "Go forward",
-            enabled = canGoForward
-        )
-
-        // Home button
+        // 1. Home button - First position
         TvIconButton(
             onClick = onHomeClick,
             icon = Icons.Default.Home,
@@ -104,7 +82,7 @@ fun AddressBar(
 
         Spacer(modifier = Modifier.width(Dimens.spacing8))
 
-        // URL TextField
+        // 2. Search bar (URL TextField) - Second position
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -158,19 +136,45 @@ fun AddressBar(
             )
         }
 
-        // Refresh/Stop button
+        Spacer(modifier = Modifier.width(Dimens.spacing8))
+
+        // 3. Reload button - Third position
         TvIconButton(
             onClick = if (isLoading) onStopClick else onRefreshClick,
             icon = if (isLoading) Icons.Default.Close else Icons.Default.Refresh,
             contentDescription = if (isLoading) "Stop loading" else "Refresh"
         )
 
-        // Menu button - Settings, Bookmarks, History, etc.
+        // 4. Forward and Back buttons - Fourth position
         TvIconButton(
-            onClick = onMenuClick,
-            icon = Icons.Default.Menu,
-            contentDescription = "Menu"
+            onClick = onBackClick,
+            icon = Icons.Default.ArrowBack,
+            contentDescription = "Go back",
+            enabled = canGoBack
         )
+
+        TvIconButton(
+            onClick = onForwardClick,
+            icon = Icons.Default.ArrowForward,
+            contentDescription = "Go forward",
+            enabled = canGoForward
+        )
+
+        // 5. Tabs button - Fifth position
+        TvTabIconButton(
+            onClick = onTabsClick,
+            tabCount = tabCount,
+            contentDescription = "Tabs ($tabCount)"
+        )
+
+        // 6. New tab button (+) - Sixth position
+        TvIconButton(
+            onClick = onNewTabClick,
+            icon = Icons.Default.Add,
+            contentDescription = "New tab"
+        )
+
+        // 7. Menu button removed as per requirements
     }
 
     // Update text field when URL changes externally (page navigation)

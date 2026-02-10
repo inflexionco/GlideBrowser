@@ -23,6 +23,7 @@ fun EnhancedBrowserScreen(
     initialUrl: String = "https://www.google.com",
     onNavigateToTabs: () -> Unit = {},
     onNavigateToMenu: () -> Unit = {},
+    onCreateNewTab: () -> Unit = {},
     modifier: Modifier = Modifier,
     webViewViewModel: WebViewViewModel = hiltViewModel(),
     tabViewModel: TabViewModel = hiltViewModel()
@@ -57,6 +58,7 @@ fun EnhancedBrowserScreen(
             onStopClick = { webViewViewModel.stopLoading() },
             onHomeClick = { webViewViewModel.loadUrl("https://www.google.com") },
             onTabsClick = onNavigateToTabs,
+            onNewTabClick = onCreateNewTab,
             onMenuClick = onNavigateToMenu
         )
 
