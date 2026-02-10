@@ -57,6 +57,43 @@ class TabViewModel @Inject constructor(
     init {
         Timber.d("TabViewModel initialized")
         observeTabs()
+        initializeTabsOnStartup()
+    }
+
+    /**
+     * Initialize tabs on app startup
+     * If no tabs exist, create a default tab with Google homepage
+     */
+    private fun initializeTabsOnStartup() {
+        viewModelScope.launch {
+            try {
+                val existingTabs = tabRepository.getAllTabs()
+
+                // Collect once to check if tabs exist
+                existingTabs.collect { tabList ->
+                    if (tabList.isEmpty()) {
+                        Timber.d("No existing tabs found, creating default tab")
+                        createNewTab(
+                            url = "https://www.google.com",
+                            title = "Google"
+                        )
+                    } else {
+                        Timber.d("Restored ${tabList.size} tabs from database")
+
+                        // Ensure there's an active tab
+                        val hasActiveTab = tabList.any { it.isActive }
+                        if (!hasActiveTab && tabList.isNotEmpty()) {
+                            Timber.d("No active tab found, setting first tab as active")
+                            tabRepository.setActiveTab(tabList.first().id)
+                        }
+                    }
+                    // Only check once on startup
+                    return@collect
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error initializing tabs on startup")
+            }
+        }
     }
 
     private fun observeTabs() {

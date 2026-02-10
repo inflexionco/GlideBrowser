@@ -53,8 +53,8 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 - [x] Build Tab ViewModel with state management
 - [x] Design Tab UI (list view, switcher)
 - [x] Implement tab creation, switching, closing
+- [x] Implement tab persistence (restore on app restart)
 - [ ] Add tab preview/thumbnails
-- [ ] Implement tab persistence (restore on app restart)
 
 ### 2.3 Navigation Bar & URL Management
 - [x] Create URL input component (keyboard input)
@@ -182,9 +182,10 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 - [ ] Create bookmark import/export (HTML format)
 
 ### 6.2 Browsing History
-- [ ] Create History entity and database schema
-- [ ] Implement HistoryRepository
-- [ ] Build History ViewModel
+- [x] Create History entity and database schema
+- [x] Implement HistoryRepository
+- [x] Build History ViewModel
+- [x] Integrate automatic history tracking in browser screen
 - [ ] Design history UI with date grouping
 - [ ] Add history search functionality
 - [ ] Implement history clearing (by time range)

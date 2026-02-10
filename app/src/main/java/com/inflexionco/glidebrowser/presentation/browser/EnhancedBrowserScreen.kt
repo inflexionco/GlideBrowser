@@ -27,7 +27,8 @@ fun EnhancedBrowserScreen(
     modifier: Modifier = Modifier,
     webViewViewModel: WebViewViewModel = hiltViewModel(),
     tabViewModel: TabViewModel = hiltViewModel(),
-    bookmarkViewModel: BookmarkViewModel = hiltViewModel()
+    bookmarkViewModel: BookmarkViewModel = hiltViewModel(),
+    historyViewModel: HistoryViewModel = hiltViewModel()
 ) {
     val webViewState by webViewViewModel.webViewState.collectAsState()
     val event by webViewViewModel.events.collectAsState()
@@ -83,8 +84,24 @@ fun EnhancedBrowserScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            onUrlChange = { webViewViewModel.onUrlChanged(it) },
-            onTitleChange = { webViewViewModel.onTitleChanged(it) },
+            onUrlChange = { newUrl ->
+                webViewViewModel.onUrlChanged(newUrl)
+                // Update active tab's URL in database
+                tabState.activeTab?.let { activeTab ->
+                    tabViewModel.updateTabUrl(activeTab.id, newUrl)
+                }
+            },
+            onTitleChange = { newTitle ->
+                webViewViewModel.onTitleChanged(newTitle)
+                // Update active tab's title in database
+                tabState.activeTab?.let { activeTab ->
+                    tabViewModel.updateTabTitle(activeTab.id, newTitle)
+                }
+                // Add to browsing history
+                if (webViewState.url.isNotEmpty() && newTitle.isNotEmpty()) {
+                    historyViewModel.addHistory(newTitle, webViewState.url)
+                }
+            },
             onProgressChange = { webViewViewModel.onProgressChanged(it) },
             onError = { webViewViewModel.onError(it) },
             onCanGoBackChange = { canBack ->
