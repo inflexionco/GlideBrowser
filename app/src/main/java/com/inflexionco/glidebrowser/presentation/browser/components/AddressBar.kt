@@ -2,6 +2,8 @@ package com.inflexionco.glidebrowser.presentation.browser.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -143,20 +146,39 @@ fun AddressBar(
                     }
                 )
 
-                // Bookmark/Favorite star icon - Inside search bar at the end (no background)
+                // Bookmark/Favorite star icon - Inside search bar with focus indication
                 if (url.isNotEmpty() && !isEditing) {
                     Spacer(modifier = Modifier.width(Dimens.spacing8))
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = if (isBookmarked) "Remove from bookmarks" else "Add to bookmarks",
+
+                    val bookmarkInteractionSource = remember { MutableInteractionSource() }
+                    val isBookmarkFocused by bookmarkInteractionSource.collectIsFocusedAsState()
+
+                    Box(
                         modifier = Modifier
-                            .size(24.dp)
-                            .clickable { onBookmarkClick() },
-                        tint = if (isBookmarked)
-                            MaterialTheme.colorScheme.primary
-                        else
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
+                            .size(32.dp)
+                            .background(
+                                color = if (isBookmarkFocused)
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                else
+                                    androidx.compose.ui.graphics.Color.Transparent,
+                                shape = CircleShape
+                            )
+                            .clickable(
+                                interactionSource = bookmarkInteractionSource,
+                                indication = null
+                            ) { onBookmarkClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = if (isBookmarked) "Remove from bookmarks" else "Add to bookmarks",
+                            modifier = Modifier.size(20.dp),
+                            tint = if (isBookmarked)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
+                    }
                 }
             }
         }
