@@ -51,6 +51,7 @@ fun EnhancedBrowserScreen(
             canGoBack = webViewState.canGoBack,
             canGoForward = webViewState.canGoForward,
             tabCount = tabState.tabs.size,
+            isBookmarked = false, // TODO: Implement bookmark state from repository
             onUrlSubmit = { webViewViewModel.loadUrl(it) },
             onBackClick = { webViewViewModel.goBack() },
             onForwardClick = { webViewViewModel.goForward() },
@@ -59,6 +60,10 @@ fun EnhancedBrowserScreen(
             onHomeClick = { webViewViewModel.loadUrl("https://www.google.com") },
             onTabsClick = onNavigateToTabs,
             onNewTabClick = onCreateNewTab,
+            onBookmarkClick = {
+                // TODO: Implement bookmark toggle (add/remove from bookmarks)
+                // Check if current URL is bookmarked, then add or remove
+            },
             onMenuClick = onNavigateToMenu
         )
 

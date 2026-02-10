@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +50,7 @@ fun AddressBar(
     canGoBack: Boolean,
     canGoForward: Boolean,
     tabCount: Int = 1,
+    isBookmarked: Boolean = false,
     onUrlSubmit: (String) -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
@@ -57,6 +59,7 @@ fun AddressBar(
     onHomeClick: () -> Unit,
     onTabsClick: () -> Unit = {},
     onNewTabClick: () -> Unit = {},
+    onBookmarkClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -82,7 +85,7 @@ fun AddressBar(
 
         Spacer(modifier = Modifier.width(Dimens.spacing8))
 
-        // 2. Search bar (URL TextField) - Second position
+        // 2. Search bar (URL TextField) with bookmark button - Second position
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -94,46 +97,60 @@ fun AddressBar(
                 .padding(horizontal = Dimens.spacing16),
             contentAlignment = Alignment.CenterStart
         ) {
-            BasicTextField(
-                value = textFieldValue,
-                onValueChange = {
-                    textFieldValue = it
-                    isEditing = true
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                singleLine = true,
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Uri,
-                    imeAction = ImeAction.Go
-                ),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        onUrlSubmit(textFieldValue)
-                        isEditing = false
-                    }
-                ),
-                decorationBox = { innerTextField ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        if (textFieldValue.isEmpty()) {
-                            Text(
-                                text = "Enter URL or search",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // URL Text Field
+                BasicTextField(
+                    value = textFieldValue,
+                    onValueChange = {
+                        textFieldValue = it
+                        isEditing = true
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .focusRequester(focusRequester),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    singleLine = true,
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Uri,
+                        imeAction = ImeAction.Go
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onGo = {
+                            onUrlSubmit(textFieldValue)
+                            isEditing = false
                         }
-                        innerTextField()
+                    ),
+                    decorationBox = { innerTextField ->
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            if (textFieldValue.isEmpty()) {
+                                Text(
+                                    text = "Enter URL or search",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                )
+                            }
+                            innerTextField()
+                        }
                     }
+                )
+
+                // Bookmark/Favorite star icon - Inside search bar at the end
+                if (url.isNotEmpty() && !isEditing) {
+                    Spacer(modifier = Modifier.width(Dimens.spacing8))
+                    TvIconButton(
+                        onClick = onBookmarkClick,
+                        icon = Icons.Filled.Star,
+                        contentDescription = if (isBookmarked) "Remove from bookmarks" else "Add to bookmarks",
+                        modifier = Modifier.padding(0.dp)
+                    )
                 }
-            )
+            }
         }
 
         Spacer(modifier = Modifier.width(Dimens.spacing8))
