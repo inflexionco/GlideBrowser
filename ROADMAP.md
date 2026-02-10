@@ -5,66 +5,67 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 
 ---
 
-## Phase 1: Foundation & Core Architecture (Weeks 1-3)
+## Phase 1: Foundation & Core Architecture (Weeks 1-3) ✅ MOSTLY COMPLETE
 
 ### 1.1 Project Setup & Architecture
 - [x] Initialize Git repository with proper configuration
 - [x] Set up project structure with MVVM-C architecture
-- [ ] Configure Hilt for dependency injection
+- [x] Configure Hilt for dependency injection
 - [ ] Set up build variants (debug, staging, production)
 - [ ] Configure ProGuard rules for release builds
 - [ ] Set up CI/CD pipeline (GitHub Actions)
 
 ### 1.2 Core Dependencies & Libraries
-- [ ] Integrate latest Android WebView component
-- [ ] Add Jetpack Compose dependencies
-- [ ] Set up Room database for local storage
-- [ ] Add Kotlin Coroutines & Flow
+- [x] Integrate latest Android WebView component (Accompanist Web)
+- [x] Add Jetpack Compose dependencies (Compose for TV)
+- [x] Set up Room database for local storage
+- [x] Add Kotlin Coroutines & Flow
+- [x] Add Timber for logging
 - [ ] Configure Retrofit/OkHttp for network operations
-- [ ] Add Timber for logging
 - [ ] Set up unit testing framework (JUnit, MockK)
 - [ ] Set up UI testing framework (Espresso, Compose Testing)
 
 ### 1.3 Basic Navigation & UI Framework
-- [ ] Implement Compose Navigation with TV support
-- [ ] Create base UI components following Google TV design guidelines
-- [ ] Set up theme system (colors, typography, dimensions for TV)
-- [ ] Implement focus management foundation
-- [ ] Create reusable TV-optimized Composables (buttons, cards, lists)
+- [x] Implement Compose Navigation with TV support
+- [x] Create base UI components following Google TV design guidelines
+- [x] Set up theme system (colors, typography, dimensions for TV)
+- [x] Implement focus management foundation
+- [x] Create reusable TV-optimized Composables (buttons, cards, lists)
 
-**Milestone 1**: Project foundation complete with basic navigation structure
+**Milestone 1**: ✅ Project foundation complete with basic navigation structure
 
 ---
 
-## Phase 2: Core Browser Engine (Weeks 4-6)
+## Phase 2: Core Browser Engine (Weeks 4-6) ✅ LARGELY COMPLETE
 
 ### 2.1 WebView Integration
-- [ ] Implement custom WebView wrapper with TV optimizations
-- [ ] Configure WebView settings for performance
-- [ ] Enable hardware acceleration
-- [ ] Set up WebView client for page events
-- [ ] Implement WebChrome client for dialogs/progress
+- [x] Implement custom WebView wrapper with TV optimizations
+- [x] Configure WebView settings for performance
+- [x] Enable hardware acceleration
+- [x] Set up WebView client for page events
+- [x] Implement WebChrome client for dialogs/progress
 - [ ] Add JavaScript interface for bridge communication
 - [ ] Handle SSL errors gracefully
 
 ### 2.2 Basic Tab Management
-- [ ] Create Tab entity and database schema
-- [ ] Implement TabRepository with Room
-- [ ] Build Tab ViewModel with state management
-- [ ] Design Tab UI (list view, switcher)
-- [ ] Implement tab creation, switching, closing
+- [x] Create Tab entity and database schema
+- [x] Implement TabRepository with Room
+- [x] Build Tab ViewModel with state management
+- [x] Design Tab UI (list view, switcher)
+- [x] Implement tab creation, switching, closing
 - [ ] Add tab preview/thumbnails
 - [ ] Implement tab persistence (restore on app restart)
 
 ### 2.3 Navigation Bar & URL Management
-- [ ] Create URL input component with voice support
-- [ ] Implement navigation buttons (back, forward, reload, home)
-- [ ] Add page loading progress indicator
+- [x] Create URL input component (keyboard input)
+- [x] Implement navigation buttons (back, forward, reload, home)
+- [x] Add page loading progress indicator
+- [x] Implement URL validation and correction
+- [x] Add HTTPS upgrade logic
+- [ ] Add voice support for URL input
 - [ ] Create URL suggestions/autocomplete
-- [ ] Implement URL validation and correction
-- [ ] Add HTTPS upgrade logic
 
-**Milestone 2**: Basic browsing functionality operational with tab support
+**Milestone 2**: ✅ Basic browsing functionality operational with tab support
 
 ---
 
@@ -153,11 +154,11 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 - [ ] Implement settings backup/restore
 - [ ] Create onboarding tutorial
 
-### 5.3 Home Screen & Speed Dial
-- [ ] Design tile-based home screen
-- [ ] Implement customizable speed dial tiles
-- [ ] Add tile editing (add, remove, reorder)
-- [ ] Create tile preview images
+### 5.3 Home Screen & Speed Dial ✅ PARTIALLY COMPLETE
+- [x] Design tile-based home screen
+- [x] Implement customizable speed dial tiles (favorites/quick access)
+- [x] Add tile editing (add, remove via long-press)
+- [x] Create tile preview images (website logos/favicons)
 - [ ] Implement frequently visited suggestions
 - [ ] Add home screen widgets (weather, news)
 - [ ] Create wallpaper customization
@@ -166,15 +167,17 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 
 ---
 
-## Phase 6: Bookmarks & History (Weeks 16-17)
+## Phase 6: Bookmarks & History (Weeks 16-17) ✅ PARTIALLY COMPLETE
 
 ### 6.1 Bookmark Management
-- [ ] Create Bookmark entity and database schema
-- [ ] Implement BookmarkRepository
-- [ ] Build Bookmark ViewModel
-- [ ] Design bookmark UI (grid/list view)
-- [ ] Add bookmark creation (with folder support)
-- [ ] Implement bookmark editing/deletion
+- [x] Create Bookmark entity and database schema
+- [x] Implement BookmarkRepository
+- [x] Build Bookmark ViewModel
+- [x] Add bookmark creation (star icon in address bar)
+- [x] Implement bookmark deletion (toggle star)
+- [ ] Design bookmark UI (grid/list view screen)
+- [ ] Add bookmark folder support
+- [ ] Add bookmark editing (rename, change URL)
 - [ ] Add bookmark search and filtering
 - [ ] Create bookmark import/export (HTML format)
 
