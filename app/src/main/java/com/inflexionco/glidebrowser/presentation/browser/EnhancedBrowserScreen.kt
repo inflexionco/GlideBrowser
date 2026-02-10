@@ -26,11 +26,15 @@ fun EnhancedBrowserScreen(
     onCreateNewTab: () -> Unit = {},
     modifier: Modifier = Modifier,
     webViewViewModel: WebViewViewModel = hiltViewModel(),
-    tabViewModel: TabViewModel = hiltViewModel()
+    tabViewModel: TabViewModel = hiltViewModel(),
+    bookmarkViewModel: BookmarkViewModel = hiltViewModel()
 ) {
     val webViewState by webViewViewModel.webViewState.collectAsState()
     val event by webViewViewModel.events.collectAsState()
     val tabState by tabViewModel.state.collectAsState()
+
+    // Get bookmark state
+    val isBookmarked by bookmarkViewModel.isBookmarked(webViewState.url).collectAsState(initial = false)
 
     // Load initial URL
     LaunchedEffect(Unit) {
@@ -51,7 +55,7 @@ fun EnhancedBrowserScreen(
             canGoBack = webViewState.canGoBack,
             canGoForward = webViewState.canGoForward,
             tabCount = tabState.tabs.size,
-            isBookmarked = false, // TODO: Implement bookmark state from repository
+            isBookmarked = isBookmarked,
             onUrlSubmit = { webViewViewModel.loadUrl(it) },
             onBackClick = { webViewViewModel.goBack() },
             onForwardClick = { webViewViewModel.goForward() },
@@ -59,10 +63,9 @@ fun EnhancedBrowserScreen(
             onStopClick = { webViewViewModel.stopLoading() },
             onHomeClick = { webViewViewModel.loadUrl("https://www.google.com") },
             onTabsClick = onNavigateToTabs,
-            onNewTabClick = onCreateNewTab,
+            onNewTabClick = { tabViewModel.createNewTab() },
             onBookmarkClick = {
-                // TODO: Implement bookmark toggle (add/remove from bookmarks)
-                // Check if current URL is bookmarked, then add or remove
+                bookmarkViewModel.toggleBookmark(webViewState.title, webViewState.url)
             },
             onMenuClick = onNavigateToMenu
         )
@@ -76,6 +79,7 @@ fun EnhancedBrowserScreen(
         // WebView
         GlideWebView(
             url = webViewState.url,
+            event = event,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
@@ -94,14 +98,8 @@ fun EnhancedBrowserScreen(
                     canGoBack = webViewState.canGoBack,
                     canGoForward = canForward
                 )
-            }
+            },
+            onEventHandled = { webViewViewModel.clearEvent() }
         )
-    }
-
-    // Clear event after handling
-    LaunchedEffect(event) {
-        if (event != null) {
-            webViewViewModel.clearEvent()
-        }
     }
 }

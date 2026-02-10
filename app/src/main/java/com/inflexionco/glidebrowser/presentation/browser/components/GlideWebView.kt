@@ -7,26 +7,48 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.google.accompanist.web.AccompanistWebViewClient
 import com.google.accompanist.web.WebView
+import com.google.accompanist.web.rememberWebViewNavigator
 import com.google.accompanist.web.rememberWebViewState
+import com.inflexionco.glidebrowser.domain.model.WebViewEvent
 
 @Composable
 fun GlideWebView(
     url: String,
     modifier: Modifier = Modifier,
+    event: WebViewEvent? = null,
     onUrlChange: (String) -> Unit = {},
     onTitleChange: (String) -> Unit = {},
     onProgressChange: (Int) -> Unit = {},
     onError: (String) -> Unit = {},
     onCanGoBackChange: (Boolean) -> Unit = {},
-    onCanGoForwardChange: (Boolean) -> Unit = {}
+    onCanGoForwardChange: (Boolean) -> Unit = {},
+    onEventHandled: () -> Unit = {}
 ) {
     val state = rememberWebViewState(url = url)
+    val navigator = rememberWebViewNavigator()
+
+    // Handle WebView events
+    LaunchedEffect(event) {
+        when (event) {
+            is WebViewEvent.LoadUrl -> navigator.loadUrl(event.url)
+            is WebViewEvent.GoBack -> navigator.navigateBack()
+            is WebViewEvent.GoForward -> navigator.navigateForward()
+            is WebViewEvent.Reload -> navigator.reload()
+            is WebViewEvent.Stop -> navigator.stopLoading()
+            else -> {}
+        }
+        if (event != null) {
+            onEventHandled()
+        }
+    }
 
     WebView(
         state = state,
+        navigator = navigator,
         modifier = modifier,
         onCreated = { webView ->
             configureWebView(webView)
