@@ -1,6 +1,7 @@
 package com.inflexionco.glidebrowser.presentation.browser.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.inflexionco.glidebrowser.ui.components.TvIconButton
@@ -140,14 +143,19 @@ fun AddressBar(
                     }
                 )
 
-                // Bookmark/Favorite star icon - Inside search bar at the end
+                // Bookmark/Favorite star icon - Inside search bar at the end (no background)
                 if (url.isNotEmpty() && !isEditing) {
                     Spacer(modifier = Modifier.width(Dimens.spacing8))
-                    TvIconButton(
-                        onClick = onBookmarkClick,
-                        icon = Icons.Filled.Star,
+                    Icon(
+                        imageVector = Icons.Filled.Star,
                         contentDescription = if (isBookmarked) "Remove from bookmarks" else "Add to bookmarks",
-                        modifier = Modifier.padding(0.dp)
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onBookmarkClick() },
+                        tint = if (isBookmarked)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                 }
             }
