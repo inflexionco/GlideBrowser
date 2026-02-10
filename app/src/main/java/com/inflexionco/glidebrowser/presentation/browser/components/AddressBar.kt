@@ -89,8 +89,6 @@ fun AddressBar(
             contentDescription = "Go home"
         )
 
-        Spacer(modifier = Modifier.width(Dimens.spacing8))
-
         // 2. Search bar (URL TextField) with bookmark button - Second position
         Box(
             modifier = Modifier
@@ -182,8 +180,6 @@ fun AddressBar(
                 }
             }
         }
-
-        Spacer(modifier = Modifier.width(Dimens.spacing8))
 
         // 3. Reload button - Third position
         TvIconButton(
