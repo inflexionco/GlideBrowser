@@ -3,6 +3,7 @@ package com.inflexionco.glidebrowser.di
 import android.content.Context
 import androidx.room.Room
 import com.inflexionco.glidebrowser.data.local.dao.BookmarkDao
+import com.inflexionco.glidebrowser.data.local.dao.FavoriteDao
 import com.inflexionco.glidebrowser.data.local.dao.HistoryDao
 import com.inflexionco.glidebrowser.data.local.dao.TabDao
 import com.inflexionco.glidebrowser.data.local.database.GlideBrowserDatabase
@@ -44,5 +45,10 @@ object DatabaseModule {
     @Provides
     fun provideTabDao(database: GlideBrowserDatabase): TabDao {
         return database.tabDao()
+    }
+
+    @Provides
+    fun provideFavoriteDao(database: GlideBrowserDatabase): FavoriteDao {
+        return database.favoriteDao()
     }
 }

@@ -3,9 +3,11 @@ package com.inflexionco.glidebrowser.data.local.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.inflexionco.glidebrowser.data.local.dao.BookmarkDao
+import com.inflexionco.glidebrowser.data.local.dao.FavoriteDao
 import com.inflexionco.glidebrowser.data.local.dao.HistoryDao
 import com.inflexionco.glidebrowser.data.local.dao.TabDao
 import com.inflexionco.glidebrowser.data.local.entity.BookmarkEntity
+import com.inflexionco.glidebrowser.data.local.entity.FavoriteEntity
 import com.inflexionco.glidebrowser.data.local.entity.HistoryEntity
 import com.inflexionco.glidebrowser.data.local.entity.TabEntity
 
@@ -13,9 +15,10 @@ import com.inflexionco.glidebrowser.data.local.entity.TabEntity
     entities = [
         BookmarkEntity::class,
         HistoryEntity::class,
-        TabEntity::class
+        TabEntity::class,
+        FavoriteEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class GlideBrowserDatabase : RoomDatabase() {
@@ -23,6 +26,7 @@ abstract class GlideBrowserDatabase : RoomDatabase() {
     abstract fun bookmarkDao(): BookmarkDao
     abstract fun historyDao(): HistoryDao
     abstract fun tabDao(): TabDao
+    abstract fun favoriteDao(): FavoriteDao
 
     companion object {
         const val DATABASE_NAME = "glide_browser_db"

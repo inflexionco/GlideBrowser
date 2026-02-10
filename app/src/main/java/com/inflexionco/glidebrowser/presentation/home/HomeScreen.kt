@@ -1,47 +1,47 @@
 package com.inflexionco.glidebrowser.presentation.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.inflexionco.glidebrowser.data.local.entity.FavoriteEntity
+import com.inflexionco.glidebrowser.presentation.home.components.AddFavoriteCard
 import com.inflexionco.glidebrowser.presentation.home.components.WebsiteCard
 import com.inflexionco.glidebrowser.ui.components.TvButton
 import com.inflexionco.glidebrowser.ui.theme.Dimens
-
-data class QuickAccessSite(
-    val title: String,
-    val url: String
-)
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onNavigateToBrowser: (String?) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // Popular websites for quick access
-    val quickAccessSites = listOf(
-        QuickAccessSite("YouTube", "https://www.youtube.com"),
-        QuickAccessSite("Netflix", "https://www.netflix.com"),
-        QuickAccessSite("Prime Video", "https://www.primevideo.com"),
-        QuickAccessSite("Disney+", "https://www.disneyplus.com"),
-        QuickAccessSite("Google", "https://www.google.com"),
-        QuickAccessSite("Wikipedia", "https://www.wikipedia.org"),
-        QuickAccessSite("Reddit", "https://www.reddit.com"),
-        QuickAccessSite("Twitter", "https://www.twitter.com"),
-        QuickAccessSite("Facebook", "https://www.facebook.com"),
-        QuickAccessSite("Instagram", "https://www.instagram.com")
-    )
+    val uiState by viewModel.uiState.collectAsState()
+    var showAddDialog by remember { mutableStateOf(false) }
+    val firstCardFocusRequester = remember { FocusRequester() }
+
+    // Request focus on first card when screen loads
+    LaunchedEffect(uiState.favorites) {
+        if (uiState.favorites.isNotEmpty()) {
+            firstCardFocusRequester.requestFocus()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -78,21 +78,49 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(Dimens.spacing32))
 
-        // Quick access grid
+        // Quick access grid with TV-optimized spacing
         LazyVerticalGrid(
             columns = GridCells.Fixed(5),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(Dimens.spacing8),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spacing16),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spacing16)
+            modifier = Modifier
+                .fillMaxSize()
+                .focusGroup(), // Group focus for better D-pad navigation
+            contentPadding = PaddingValues(
+                horizontal = Dimens.spacing8,
+                vertical = Dimens.spacing8
+            ),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spacing24), // Larger spacing for TV
+            verticalArrangement = Arrangement.spacedBy(Dimens.spacing24)
         ) {
-            items(quickAccessSites) { site ->
+            // Favorites
+            items(uiState.favorites, key = { it.url }) { favorite ->
+                val isFirst = favorite == uiState.favorites.firstOrNull()
                 WebsiteCard(
-                    title = site.title,
-                    url = site.url,
-                    onClick = { onNavigateToBrowser(site.url) }
+                    title = favorite.title,
+                    url = favorite.url,
+                    onClick = { onNavigateToBrowser(favorite.url) },
+                    onRemove = {
+                        viewModel.removeFavorite(favorite.url)
+                    },
+                    modifier = if (isFirst) {
+                        Modifier.focusRequester(firstCardFocusRequester)
+                    } else {
+                        Modifier
+                    }
+                )
+            }
+
+            // Add favorite card
+            item {
+                AddFavoriteCard(
+                    onClick = { showAddDialog = true }
                 )
             }
         }
+    }
+
+    // Add favorite dialog (implement later with custom dialog)
+    if (showAddDialog) {
+        // TODO: Implement add favorite dialog
+        showAddDialog = false
     }
 }
