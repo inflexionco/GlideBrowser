@@ -22,6 +22,7 @@ import com.inflexionco.glidebrowser.presentation.browser.BrowserScreen
 import com.inflexionco.glidebrowser.presentation.browser.EnhancedBrowserScreen
 import com.inflexionco.glidebrowser.presentation.history.HistoryScreen
 import com.inflexionco.glidebrowser.presentation.home.HomeScreen
+import com.inflexionco.glidebrowser.presentation.settings.SettingsScreen
 import com.inflexionco.glidebrowser.presentation.tabs.TabSwitcherScreen
 import com.inflexionco.glidebrowser.ui.components.TvButton
 
@@ -79,38 +80,9 @@ fun NavGraph(
         }
 
         composable<Routes.Settings> {
-            // Placeholder Settings Screen
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Settings & Menu",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    Text(
-                        text = "Coming Soon",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    TvButton(
-                        text = "Bookmarks",
-                        onClick = { navController.navigate(Routes.Bookmarks) }
-                    )
-                    TvButton(
-                        text = "History",
-                        onClick = { navController.navigate(Routes.History) }
-                    )
-                    TvButton(
-                        text = "Back to Browser",
-                        onClick = { navController.popBackStack() }
-                    )
-                }
-            }
+            SettingsScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
 
         composable<Routes.Bookmarks> {
