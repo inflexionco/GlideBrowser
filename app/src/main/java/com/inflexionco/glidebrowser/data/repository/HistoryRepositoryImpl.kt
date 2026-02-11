@@ -19,6 +19,12 @@ class HistoryRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun searchHistory(query: String, limit: Int): Flow<List<HistoryItem>> {
+        return historyDao.searchHistory(query, limit).map { entities ->
+            entities.map { it.toHistoryItem() }
+        }
+    }
+
     override suspend fun addHistory(title: String, url: String, faviconUrl: String?) {
         try {
             // Check if this URL already exists in history

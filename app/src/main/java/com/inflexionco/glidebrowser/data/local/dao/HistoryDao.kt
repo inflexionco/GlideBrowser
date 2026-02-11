@@ -10,6 +10,9 @@ interface HistoryDao {
     @Query("SELECT * FROM history ORDER BY visitedAt DESC LIMIT :limit")
     fun getRecentHistory(limit: Int = 50): Flow<List<HistoryEntity>>
 
+    @Query("SELECT * FROM history WHERE title LIKE '%' || :query || '%' OR url LIKE '%' || :query || '%' ORDER BY visitCount DESC, visitedAt DESC LIMIT :limit")
+    fun searchHistory(query: String, limit: Int = 5): Flow<List<HistoryEntity>>
+
     @Query("SELECT * FROM history WHERE id = :id")
     suspend fun getHistoryById(id: Long): HistoryEntity?
 

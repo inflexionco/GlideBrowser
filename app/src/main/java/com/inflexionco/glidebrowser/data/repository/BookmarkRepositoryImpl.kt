@@ -14,6 +14,10 @@ class BookmarkRepositoryImpl @Inject constructor(
         return bookmarkDao.getAllBookmarks()
     }
 
+    override fun searchBookmarks(query: String, limit: Int): Flow<List<BookmarkEntity>> {
+        return bookmarkDao.searchBookmarks(query, limit)
+    }
+
     override fun isBookmarked(url: String): Flow<Boolean> {
         return bookmarkDao.isBookmarked(url)
     }

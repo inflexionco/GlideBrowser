@@ -62,8 +62,8 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 - [x] Add page loading progress indicator
 - [x] Implement URL validation and correction
 - [x] Add HTTPS upgrade logic
+- [x] Create URL suggestions/autocomplete from history and bookmarks
 - [ ] Add voice support for URL input
-- [ ] Create URL suggestions/autocomplete
 
 **Milestone 2**: ✅ Basic browsing functionality operational with tab support
 

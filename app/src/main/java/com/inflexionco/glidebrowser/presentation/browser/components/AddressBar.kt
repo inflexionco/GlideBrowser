@@ -28,11 +28,14 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.inflexionco.glidebrowser.presentation.browser.SuggestionViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -58,6 +61,50 @@ fun AddressBar(
     tabCount: Int = 1,
     isBookmarked: Boolean = false,
     onUrlSubmit: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onForwardClick: () -> Unit,
+    onRefreshClick: () -> Unit,
+    onStopClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onTabsClick: () -> Unit = {},
+    onNewTabClick: () -> Unit = {},
+    onBookmarkClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    AddressBarInternal(
+        url = url,
+        isLoading = isLoading,
+        canGoBack = canGoBack,
+        canGoForward = canGoForward,
+        tabCount = tabCount,
+        isBookmarked = isBookmarked,
+        onUrlSubmit = onUrlSubmit,
+        onTextChanged = {},
+        onBackClick = onBackClick,
+        onForwardClick = onForwardClick,
+        onRefreshClick = onRefreshClick,
+        onStopClick = onStopClick,
+        onHomeClick = onHomeClick,
+        onTabsClick = onTabsClick,
+        onNewTabClick = onNewTabClick,
+        onBookmarkClick = onBookmarkClick,
+        onMenuClick = onMenuClick,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+internal fun AddressBarInternal(
+    url: String,
+    isLoading: Boolean,
+    canGoBack: Boolean,
+    canGoForward: Boolean,
+    tabCount: Int = 1,
+    isBookmarked: Boolean = false,
+    onUrlSubmit: (String) -> Unit,
+    onTextChanged: (String) -> Unit,
     onBackClick: () -> Unit,
     onForwardClick: () -> Unit,
     onRefreshClick: () -> Unit,
@@ -111,6 +158,7 @@ fun AddressBar(
                     onValueChange = {
                         textFieldValue = it
                         isEditing = true
+                        onTextChanged(it)
                     },
                     modifier = Modifier
                         .weight(1f)
