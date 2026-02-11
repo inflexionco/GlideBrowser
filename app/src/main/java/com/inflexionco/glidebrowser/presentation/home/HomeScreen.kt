@@ -110,7 +110,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(Dimens.spacing24)
         ) {
             // Favorites
-            items(uiState.favorites, key = { it.url }) { favorite ->
+            items(uiState.favorites, key = { it.id }) { favorite ->
                 val isFirst = favorite == uiState.favorites.firstOrNull()
                 WebsiteCard(
                     title = favorite.title,

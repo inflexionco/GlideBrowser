@@ -111,7 +111,7 @@ fun BookmarksScreen(
                 horizontalArrangement = Arrangement.spacedBy(Dimens.spacing24),
                 verticalArrangement = Arrangement.spacedBy(Dimens.spacing24)
             ) {
-                items(bookmarks, key = { it.url }) { bookmark ->
+                items(bookmarks, key = { it.id }) { bookmark ->
                     WebsiteCard(
                         title = bookmark.title,
                         url = bookmark.url,
