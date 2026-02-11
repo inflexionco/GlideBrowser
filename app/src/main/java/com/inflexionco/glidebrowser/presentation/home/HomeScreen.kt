@@ -23,6 +23,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.inflexionco.glidebrowser.data.local.entity.FavoriteEntity
 import com.inflexionco.glidebrowser.presentation.home.components.AddFavoriteCard
+import com.inflexionco.glidebrowser.presentation.home.components.AddFavoriteDialog
 import com.inflexionco.glidebrowser.presentation.home.components.WebsiteCard
 import com.inflexionco.glidebrowser.ui.components.TvButton
 import com.inflexionco.glidebrowser.ui.theme.Dimens
@@ -136,9 +137,20 @@ fun HomeScreen(
         }
     }
 
-    // Add favorite dialog (implement later with custom dialog)
+    // Add favorite dialog
     if (showAddDialog) {
-        // TODO: Implement add favorite dialog
-        showAddDialog = false
+        AddFavoriteDialog(
+            onDismiss = { showAddDialog = false },
+            onConfirm = { title, url ->
+                // Ensure URL has protocol
+                val finalUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    "https://$url"
+                } else {
+                    url
+                }
+                viewModel.addFavorite(title, finalUrl)
+                showAddDialog = false
+            }
+        )
     }
 }
