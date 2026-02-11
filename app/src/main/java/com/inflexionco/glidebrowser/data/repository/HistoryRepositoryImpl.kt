@@ -19,6 +19,12 @@ class HistoryRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getMostVisited(limit: Int, minVisits: Int): Flow<List<HistoryItem>> {
+        return historyDao.getMostVisited(limit, minVisits).map { entities ->
+            entities.map { it.toHistoryItem() }
+        }
+    }
+
     override fun searchHistory(query: String, limit: Int): Flow<List<HistoryItem>> {
         return historyDao.searchHistory(query, limit).map { entities ->
             entities.map { it.toHistoryItem() }

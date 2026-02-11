@@ -97,6 +97,17 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(Dimens.spacing32))
 
+        // Most Visited section (if available)
+        if (uiState.mostVisited.isNotEmpty()) {
+            Text(
+                text = "Most Visited",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = Dimens.spacing8)
+            )
+            Spacer(modifier = Modifier.height(Dimens.spacing16))
+        }
+
         // Quick access grid with TV-optimized spacing
         LazyVerticalGrid(
             columns = GridCells.Fixed(5),
@@ -110,9 +121,22 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.spacedBy(Dimens.spacing24), // Larger spacing for TV
             verticalArrangement = Arrangement.spacedBy(Dimens.spacing24)
         ) {
+            // Most Visited (exclude URLs already in favorites)
+            val favoriteUrls = uiState.favorites.map { it.url }.toSet()
+            val filteredMostVisited = uiState.mostVisited.filter { it.url !in favoriteUrls }
+
+            items(filteredMostVisited, key = { "history_${it.id}" }) { historyItem ->
+                WebsiteCard(
+                    title = historyItem.title,
+                    url = historyItem.url,
+                    onClick = { onNavigateToBrowser(historyItem.url) },
+                    onRemove = null // Most visited items can't be removed directly
+                )
+            }
+
             // Favorites
-            items(uiState.favorites, key = { it.id }) { favorite ->
-                val isFirst = favorite == uiState.favorites.firstOrNull()
+            items(uiState.favorites, key = { "favorite_${it.id}" }) { favorite ->
+                val isFirst = favorite == uiState.favorites.firstOrNull() && filteredMostVisited.isEmpty()
                 WebsiteCard(
                     title = favorite.title,
                     url = favorite.url,

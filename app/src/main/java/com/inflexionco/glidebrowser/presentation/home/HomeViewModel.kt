@@ -3,7 +3,9 @@ package com.inflexionco.glidebrowser.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.inflexionco.glidebrowser.data.local.entity.FavoriteEntity
+import com.inflexionco.glidebrowser.domain.model.HistoryItem
 import com.inflexionco.glidebrowser.domain.repository.FavoriteRepository
+import com.inflexionco.glidebrowser.domain.repository.HistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val favoriteRepository: FavoriteRepository
+    private val favoriteRepository: FavoriteRepository,
+    private val historyRepository: HistoryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -24,6 +27,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadFavorites()
+        loadMostVisited()
         initializeDefaultFavorites()
     }
 
@@ -71,6 +75,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun loadMostVisited() {
+        viewModelScope.launch {
+            historyRepository.getMostVisited(limit = 10, minVisits = 2)
+                .catch { e ->
+                    Timber.e(e, "Error loading most visited")
+                }
+                .collect { history ->
+                    _uiState.update { it.copy(mostVisited = history) }
+                }
+        }
+    }
+
     fun addFavorite(title: String, url: String) {
         viewModelScope.launch {
             try {
@@ -109,6 +125,7 @@ class HomeViewModel @Inject constructor(
 
 data class HomeUiState(
     val favorites: List<FavoriteEntity> = emptyList(),
+    val mostVisited: List<HistoryItem> = emptyList(),
     val isLoading: Boolean = true,
     val error: String? = null
 )
