@@ -45,6 +45,17 @@ class BookmarkViewModel @Inject constructor(
         }
     }
 
+    fun updateBookmark(id: Long, title: String, url: String) {
+        viewModelScope.launch {
+            try {
+                bookmarkRepository.updateBookmark(id, title, url)
+                Timber.d("Bookmark updated: $url")
+            } catch (e: Exception) {
+                Timber.e(e, "Error updating bookmark")
+            }
+        }
+    }
+
     fun removeBookmark(url: String) {
         viewModelScope.launch {
             try {

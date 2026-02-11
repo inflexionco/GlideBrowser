@@ -34,6 +34,14 @@ class BookmarkRepositoryImpl @Inject constructor(
         bookmarkDao.insertBookmark(bookmark)
     }
 
+    override suspend fun updateBookmark(id: Long, title: String, url: String) {
+        val bookmark = bookmarkDao.getBookmarkById(id)
+        if (bookmark != null) {
+            val updated = bookmark.copy(title = title, url = url)
+            bookmarkDao.updateBookmark(updated)
+        }
+    }
+
     override suspend fun removeBookmark(url: String) {
         bookmarkDao.deleteBookmarkByUrl(url)
     }

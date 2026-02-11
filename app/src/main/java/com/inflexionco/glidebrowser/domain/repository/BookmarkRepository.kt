@@ -9,6 +9,7 @@ interface BookmarkRepository {
     fun isBookmarked(url: String): Flow<Boolean>
     suspend fun getBookmarkByUrl(url: String): BookmarkEntity?
     suspend fun addBookmark(title: String, url: String)
+    suspend fun updateBookmark(id: Long, title: String, url: String)
     suspend fun removeBookmark(url: String)
     suspend fun toggleBookmark(title: String, url: String)
 }

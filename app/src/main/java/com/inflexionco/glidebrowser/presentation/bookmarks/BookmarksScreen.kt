@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,8 +18,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.inflexionco.glidebrowser.data.local.entity.BookmarkEntity
+import com.inflexionco.glidebrowser.presentation.bookmarks.components.BookmarkCard
+import com.inflexionco.glidebrowser.presentation.bookmarks.components.EditBookmarkDialog
 import com.inflexionco.glidebrowser.presentation.browser.BookmarkViewModel
-import com.inflexionco.glidebrowser.presentation.home.components.WebsiteCard
 import com.inflexionco.glidebrowser.ui.components.TvButton
 import com.inflexionco.glidebrowser.ui.theme.Dimens
 
@@ -33,6 +35,7 @@ fun BookmarksScreen(
 ) {
     val bookmarks by viewModel.getAllBookmarks().collectAsState(initial = emptyList())
     val backButtonFocusRequester = remember { FocusRequester() }
+    var editingBookmark by remember { mutableStateOf<BookmarkEntity?>(null) }
 
     // Request focus on back button when screen loads
     LaunchedEffect(Unit) {
@@ -68,7 +71,7 @@ fun BookmarksScreen(
             TvButton(
                 text = "Back",
                 onClick = onNavigateBack,
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 modifier = Modifier.focusRequester(backButtonFocusRequester)
             )
         }
@@ -112,16 +115,34 @@ fun BookmarksScreen(
                 verticalArrangement = Arrangement.spacedBy(Dimens.spacing24)
             ) {
                 items(bookmarks, key = { it.id }) { bookmark ->
-                    WebsiteCard(
+                    BookmarkCard(
                         title = bookmark.title,
                         url = bookmark.url,
                         onClick = { onBookmarkClick(bookmark.url) },
-                        onRemove = {
-                            viewModel.removeBookmark(bookmark.url)
-                        }
+                        onEdit = { editingBookmark = bookmark },
+                        onRemove = { viewModel.removeBookmark(bookmark.url) }
                     )
                 }
             }
         }
+    }
+
+    // Edit bookmark dialog
+    editingBookmark?.let { bookmark ->
+        EditBookmarkDialog(
+            currentTitle = bookmark.title,
+            currentUrl = bookmark.url,
+            onDismiss = { editingBookmark = null },
+            onConfirm = { newTitle, newUrl ->
+                // Ensure URL has protocol
+                val finalUrl = if (!newUrl.startsWith("http://") && !newUrl.startsWith("https://")) {
+                    "https://$newUrl"
+                } else {
+                    newUrl
+                }
+                viewModel.updateBookmark(bookmark.id, newTitle, finalUrl)
+                editingBookmark = null
+            }
+        )
     }
 }
