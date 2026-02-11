@@ -5,13 +5,21 @@ import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -33,8 +41,16 @@ fun HistoryScreen(
     modifier: Modifier = Modifier,
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
-    val historyItems by viewModel.getRecentHistory(100).collectAsState(initial = emptyList())
+    var searchQuery by remember { mutableStateOf("") }
+    val searchFocusRequester = remember { FocusRequester() }
     val backButtonFocusRequester = remember { FocusRequester() }
+
+    // Get history based on search query
+    val historyItems by if (searchQuery.isBlank()) {
+        viewModel.getRecentHistory(100).collectAsState(initial = emptyList())
+    } else {
+        viewModel.searchHistory(searchQuery, 100).collectAsState(initial = emptyList())
+    }
 
     // Group history by date
     val groupedHistory = remember(historyItems) {
@@ -92,13 +108,76 @@ fun HistoryScreen(
                 TvButton(
                     text = "Back",
                     onClick = onNavigateBack,
-                    icon = Icons.Default.ArrowBack,
+                    icon = Icons.AutoMirrored.Filled.ArrowBack,
                     modifier = Modifier.focusRequester(backButtonFocusRequester)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(Dimens.spacing32))
+        Spacer(modifier = Modifier.height(Dimens.spacing24))
+
+        // Search bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(Dimens.spacing12)
+                )
+                .padding(horizontal = Dimens.spacing16),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spacing12)
+        ) {
+            androidx.tv.material3.Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
+
+            BasicTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier
+                    .weight(1f)
+                    .focusRequester(searchFocusRequester),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                singleLine = true,
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Search
+                ),
+                decorationBox = { innerTextField ->
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        if (searchQuery.isEmpty()) {
+                            Text(
+                                text = "Search history...",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
+            )
+
+            if (searchQuery.isNotEmpty()) {
+                androidx.tv.material3.IconButton(
+                    onClick = { searchQuery = "" }
+                ) {
+                    androidx.tv.material3.Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Clear search",
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(Dimens.spacing24))
 
         // History list with date grouping
         if (historyItems.isEmpty()) {

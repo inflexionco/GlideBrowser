@@ -19,6 +19,10 @@ class HistoryViewModel @Inject constructor(
         return historyRepository.getRecentHistory(limit)
     }
 
+    fun searchHistory(query: String, limit: Int = 100): Flow<List<HistoryItem>> {
+        return historyRepository.searchHistory(query, limit)
+    }
+
     fun addHistory(title: String, url: String, faviconUrl: String? = null) {
         viewModelScope.launch {
             try {
