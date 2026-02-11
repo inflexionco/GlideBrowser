@@ -17,8 +17,10 @@ import androidx.navigation.toRoute
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.inflexionco.glidebrowser.presentation.bookmarks.BookmarksScreen
 import com.inflexionco.glidebrowser.presentation.browser.BrowserScreen
 import com.inflexionco.glidebrowser.presentation.browser.EnhancedBrowserScreen
+import com.inflexionco.glidebrowser.presentation.history.HistoryScreen
 import com.inflexionco.glidebrowser.presentation.home.HomeScreen
 import com.inflexionco.glidebrowser.presentation.tabs.TabSwitcherScreen
 import com.inflexionco.glidebrowser.ui.components.TvButton
@@ -85,10 +87,18 @@ fun NavGraph(
                         style = MaterialTheme.typography.headlineMedium
                     )
                     Text(
-                        text = "Coming Soon - Will include Settings, Bookmarks, and History",
+                        text = "Coming Soon",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(modifier = Modifier.height(16.dp))
+                    TvButton(
+                        text = "Bookmarks",
+                        onClick = { navController.navigate(Routes.Bookmarks) }
+                    )
+                    TvButton(
+                        text = "History",
+                        onClick = { navController.navigate(Routes.History) }
+                    )
                     TvButton(
                         text = "Back to Browser",
                         onClick = { navController.popBackStack() }
@@ -97,6 +107,26 @@ fun NavGraph(
             }
         }
 
-        // TODO: Add more destinations (Bookmarks, History)
+        composable<Routes.Bookmarks> {
+            BookmarksScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onBookmarkClick = { url ->
+                    navController.navigate(Routes.Browser(url)) {
+                        popUpTo(Routes.Home) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.History> {
+            HistoryScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onHistoryItemClick = { url ->
+                    navController.navigate(Routes.Browser(url)) {
+                        popUpTo(Routes.Home) { inclusive = false }
+                    }
+                }
+            )
+        }
     }
 }

@@ -175,7 +175,8 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 - [x] Build Bookmark ViewModel
 - [x] Add bookmark creation (star icon in address bar)
 - [x] Implement bookmark deletion (toggle star)
-- [ ] Design bookmark UI (grid/list view screen)
+- [x] Design bookmark UI (grid/list view screen)
+- [x] Implement navigation to bookmarks screen
 - [ ] Add bookmark folder support
 - [ ] Add bookmark editing (rename, change URL)
 - [ ] Add bookmark search and filtering
@@ -186,9 +187,11 @@ Glide Browser aims to be the ultimate Android TV web browsing experience, featur
 - [x] Implement HistoryRepository
 - [x] Build History ViewModel
 - [x] Integrate automatic history tracking in browser screen
-- [ ] Design history UI with date grouping
+- [x] Design history UI with date grouping
+- [x] Implement history clearing (clear all)
+- [x] Implement navigation to history screen
 - [ ] Add history search functionality
-- [ ] Implement history clearing (by time range)
+- [ ] Implement history clearing (by time range - specific dates)
 - [ ] Add "most visited" tracking
 - [ ] Create history export functionality
 

@@ -2,6 +2,7 @@ package com.inflexionco.glidebrowser.presentation.browser
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.inflexionco.glidebrowser.data.local.entity.BookmarkEntity
 import com.inflexionco.glidebrowser.domain.repository.BookmarkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,10 @@ import javax.inject.Inject
 class BookmarkViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository
 ) : ViewModel() {
+
+    fun getAllBookmarks(): Flow<List<BookmarkEntity>> {
+        return bookmarkRepository.getAllBookmarks()
+    }
 
     fun isBookmarked(url: String): Flow<Boolean> {
         return bookmarkRepository.isBookmarked(url)
