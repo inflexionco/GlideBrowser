@@ -12,7 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import com.inflexionco.glidebrowser.domain.model.WebViewEvent
-import com.inflexionco.glidebrowser.presentation.browser.components.AddressBar
+import com.inflexionco.glidebrowser.presentation.browser.components.AddressBarWithSuggestions
 import com.inflexionco.glidebrowser.presentation.browser.components.GlideWebView
 import com.inflexionco.glidebrowser.presentation.browser.components.PageLoadingIndicator
 import com.inflexionco.glidebrowser.presentation.tabs.TabViewModel
@@ -49,8 +49,8 @@ fun EnhancedBrowserScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Address Bar
-        AddressBar(
+        // Address Bar with URL Suggestions
+        AddressBarWithSuggestions(
             url = webViewState.url,
             isLoading = webViewState.isLoading,
             canGoBack = webViewState.canGoBack,
