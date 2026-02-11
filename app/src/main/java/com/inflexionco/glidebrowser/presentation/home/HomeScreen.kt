@@ -7,8 +7,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +31,8 @@ import com.inflexionco.glidebrowser.ui.theme.Dimens
 @Composable
 fun HomeScreen(
     onNavigateToBrowser: (String?) -> Unit,
+    onNavigateToBookmarks: () -> Unit = {},
+    onNavigateToHistory: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -69,11 +73,25 @@ fun HomeScreen(
                 )
             }
 
-            TvButton(
-                text = "Open URL",
-                onClick = { onNavigateToBrowser("https://www.google.com") },
-                icon = Icons.Default.Search
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spacing8)
+            ) {
+                TvButton(
+                    text = "Bookmarks",
+                    onClick = onNavigateToBookmarks,
+                    icon = Icons.Default.Star
+                )
+                TvButton(
+                    text = "History",
+                    onClick = onNavigateToHistory,
+                    icon = Icons.AutoMirrored.Filled.List
+                )
+                TvButton(
+                    text = "Open URL",
+                    onClick = { onNavigateToBrowser("https://www.google.com") },
+                    icon = Icons.Default.Search
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(Dimens.spacing32))

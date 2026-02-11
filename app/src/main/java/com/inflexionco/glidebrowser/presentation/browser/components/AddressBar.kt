@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
@@ -265,7 +266,12 @@ internal fun AddressBarInternal(
             contentDescription = "New tab"
         )
 
-        // 7. Menu button removed as per requirements
+        // 7. Menu button - Seventh position (for accessing Bookmarks/History)
+        TvIconButton(
+            onClick = onMenuClick,
+            icon = Icons.Default.Menu,
+            contentDescription = "Menu"
+        )
     }
 
     // Update text field when URL changes externally (page navigation)

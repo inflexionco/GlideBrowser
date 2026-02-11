@@ -39,6 +39,12 @@ fun NavGraph(
             HomeScreen(
                 onNavigateToBrowser = { url ->
                     navController.navigate(Routes.Browser(url))
+                },
+                onNavigateToBookmarks = {
+                    navController.navigate(Routes.Bookmarks)
+                },
+                onNavigateToHistory = {
+                    navController.navigate(Routes.History)
                 }
             )
         }
