@@ -5,11 +5,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface BookmarkRepository {
     fun getAllBookmarks(): Flow<List<BookmarkEntity>>
+    fun getBookmarksWithoutFolder(): Flow<List<BookmarkEntity>>
+    fun getBookmarksByFolder(folderId: Long): Flow<List<BookmarkEntity>>
     fun searchBookmarks(query: String, limit: Int = 5): Flow<List<BookmarkEntity>>
+    fun searchAllBookmarks(query: String): Flow<List<BookmarkEntity>>
     fun isBookmarked(url: String): Flow<Boolean>
     suspend fun getBookmarkByUrl(url: String): BookmarkEntity?
-    suspend fun addBookmark(title: String, url: String)
-    suspend fun updateBookmark(id: Long, title: String, url: String)
+    suspend fun addBookmark(title: String, url: String, folderId: Long? = null)
+    suspend fun updateBookmark(id: Long, title: String, url: String, folderId: Long? = null)
+    suspend fun moveBookmarkToFolder(bookmarkId: Long, folderId: Long?)
     suspend fun removeBookmark(url: String)
     suspend fun toggleBookmark(title: String, url: String)
 }

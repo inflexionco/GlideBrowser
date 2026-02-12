@@ -6,16 +6,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.inflexionco.glidebrowser.data.local.entity.BookmarkEntity
@@ -36,6 +40,19 @@ fun BookmarksScreen(
     val bookmarks by viewModel.getAllBookmarks().collectAsState(initial = emptyList())
     val backButtonFocusRequester = remember { FocusRequester() }
     var editingBookmark by remember { mutableStateOf<BookmarkEntity?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    // Filter bookmarks based on search query
+    val filteredBookmarks = remember(bookmarks, searchQuery) {
+        if (searchQuery.isBlank()) {
+            bookmarks
+        } else {
+            bookmarks.filter { bookmark ->
+                bookmark.title.contains(searchQuery, ignoreCase = true) ||
+                bookmark.url.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
 
     // Request focus on back button when screen loads
     LaunchedEffect(Unit) {
@@ -76,7 +93,50 @@ fun BookmarksScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(Dimens.spacing32))
+        Spacer(modifier = Modifier.height(Dimens.spacing24))
+
+        // Search bar
+        if (bookmarks.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    .padding(horizontal = Dimens.spacing16, vertical = Dimens.spacing12),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(Dimens.spacing12))
+                BasicTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                    decorationBox = { innerTextField ->
+                        if (searchQuery.isEmpty()) {
+                            Text(
+                                text = "Search bookmarks...",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        }
+                        innerTextField()
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(Dimens.spacing24))
 
         // Bookmarks grid
         if (bookmarks.isEmpty()) {
@@ -114,7 +174,7 @@ fun BookmarksScreen(
                 horizontalArrangement = Arrangement.spacedBy(Dimens.spacing24),
                 verticalArrangement = Arrangement.spacedBy(Dimens.spacing24)
             ) {
-                items(bookmarks, key = { it.id }) { bookmark ->
+                items(filteredBookmarks, key = { it.id }) { bookmark ->
                     BookmarkCard(
                         title = bookmark.title,
                         url = bookmark.url,

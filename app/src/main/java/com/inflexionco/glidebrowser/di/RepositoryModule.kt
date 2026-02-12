@@ -1,10 +1,12 @@
 package com.inflexionco.glidebrowser.di
 
+import com.inflexionco.glidebrowser.data.repository.BookmarkFolderRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.BookmarkRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.FavoriteRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.HistoryRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.SettingsRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.TabRepositoryImpl
+import com.inflexionco.glidebrowser.domain.repository.BookmarkFolderRepository
 import com.inflexionco.glidebrowser.domain.repository.BookmarkRepository
 import com.inflexionco.glidebrowser.domain.repository.FavoriteRepository
 import com.inflexionco.glidebrowser.domain.repository.HistoryRepository
@@ -37,6 +39,12 @@ abstract class RepositoryModule {
     abstract fun bindBookmarkRepository(
         bookmarkRepositoryImpl: BookmarkRepositoryImpl
     ): BookmarkRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBookmarkFolderRepository(
+        bookmarkFolderRepositoryImpl: BookmarkFolderRepositoryImpl
+    ): BookmarkFolderRepository
 
     @Binds
     @Singleton

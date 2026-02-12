@@ -14,8 +14,20 @@ class BookmarkRepositoryImpl @Inject constructor(
         return bookmarkDao.getAllBookmarks()
     }
 
+    override fun getBookmarksWithoutFolder(): Flow<List<BookmarkEntity>> {
+        return bookmarkDao.getBookmarksWithoutFolder()
+    }
+
+    override fun getBookmarksByFolder(folderId: Long): Flow<List<BookmarkEntity>> {
+        return bookmarkDao.getBookmarksByFolder(folderId)
+    }
+
     override fun searchBookmarks(query: String, limit: Int): Flow<List<BookmarkEntity>> {
         return bookmarkDao.searchBookmarks(query, limit)
+    }
+
+    override fun searchAllBookmarks(query: String): Flow<List<BookmarkEntity>> {
+        return bookmarkDao.searchAllBookmarks(query)
     }
 
     override fun isBookmarked(url: String): Flow<Boolean> {
@@ -26,18 +38,27 @@ class BookmarkRepositoryImpl @Inject constructor(
         return bookmarkDao.getBookmarkByUrl(url)
     }
 
-    override suspend fun addBookmark(title: String, url: String) {
+    override suspend fun addBookmark(title: String, url: String, folderId: Long?) {
         val bookmark = BookmarkEntity(
             title = title,
-            url = url
+            url = url,
+            folderId = folderId
         )
         bookmarkDao.insertBookmark(bookmark)
     }
 
-    override suspend fun updateBookmark(id: Long, title: String, url: String) {
+    override suspend fun updateBookmark(id: Long, title: String, url: String, folderId: Long?) {
         val bookmark = bookmarkDao.getBookmarkById(id)
         if (bookmark != null) {
-            val updated = bookmark.copy(title = title, url = url)
+            val updated = bookmark.copy(title = title, url = url, folderId = folderId)
+            bookmarkDao.updateBookmark(updated)
+        }
+    }
+
+    override suspend fun moveBookmarkToFolder(bookmarkId: Long, folderId: Long?) {
+        val bookmark = bookmarkDao.getBookmarkById(bookmarkId)
+        if (bookmark != null) {
+            val updated = bookmark.copy(folderId = folderId)
             bookmarkDao.updateBookmark(updated)
         }
     }

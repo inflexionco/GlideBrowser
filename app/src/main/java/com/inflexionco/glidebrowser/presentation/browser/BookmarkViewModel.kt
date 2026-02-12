@@ -19,6 +19,18 @@ class BookmarkViewModel @Inject constructor(
         return bookmarkRepository.getAllBookmarks()
     }
 
+    fun getBookmarksWithoutFolder(): Flow<List<BookmarkEntity>> {
+        return bookmarkRepository.getBookmarksWithoutFolder()
+    }
+
+    fun getBookmarksByFolder(folderId: Long): Flow<List<BookmarkEntity>> {
+        return bookmarkRepository.getBookmarksByFolder(folderId)
+    }
+
+    fun searchBookmarks(query: String): Flow<List<BookmarkEntity>> {
+        return bookmarkRepository.searchAllBookmarks(query)
+    }
+
     fun isBookmarked(url: String): Flow<Boolean> {
         return bookmarkRepository.isBookmarked(url)
     }
