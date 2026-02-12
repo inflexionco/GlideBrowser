@@ -27,5 +27,7 @@ interface TabRepository {
 
     suspend fun updateTabTitle(tabId: Long, title: String)
 
+    suspend fun updateTabThumbnail(tabId: Long, thumbnailPath: String?)
+
     suspend fun reorderTabs(tabs: List<Tab>)
 }

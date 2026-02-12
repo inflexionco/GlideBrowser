@@ -18,7 +18,7 @@ import com.inflexionco.glidebrowser.data.local.entity.TabEntity
         TabEntity::class,
         FavoriteEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class GlideBrowserDatabase : RoomDatabase() {

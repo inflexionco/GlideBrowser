@@ -88,6 +88,14 @@ class TabRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateTabThumbnail(tabId: Long, thumbnailPath: String?) {
+        Timber.d("Updating tab thumbnail: id=$tabId, path=$thumbnailPath")
+        val tab = tabDao.getTabById(tabId)
+        if (tab != null) {
+            tabDao.updateTab(tab.copy(thumbnailPath = thumbnailPath, updatedAt = System.currentTimeMillis()))
+        }
+    }
+
     override suspend fun reorderTabs(tabs: List<Tab>) {
         Timber.d("Reordering ${tabs.size} tabs")
         tabs.forEachIndexed { index, tab ->
@@ -103,6 +111,7 @@ class TabRepositoryImpl @Inject constructor(
             title = title,
             position = position,
             isActive = isActive,
+            thumbnailPath = thumbnailPath,
             createdAt = createdAt,
             updatedAt = updatedAt
         )
@@ -115,6 +124,7 @@ class TabRepositoryImpl @Inject constructor(
             title = title,
             position = position,
             isActive = isActive,
+            thumbnailPath = thumbnailPath,
             createdAt = createdAt,
             updatedAt = updatedAt
         )
