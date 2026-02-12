@@ -15,6 +15,17 @@ class FavoriteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addFavorite(title: String, url: String) {
+        // Check if favorite already exists
+        val existing = favoriteDao.getFavoriteByUrl(url)
+        if (existing != null) {
+            // Update existing favorite with new title if needed
+            if (existing.title != title) {
+                favoriteDao.updateFavorite(existing.copy(title = title))
+            }
+            // Don't add duplicate
+            return
+        }
+
         val count = favoriteDao.getFavoritesCount()
         val favorite = FavoriteEntity(
             title = title,
