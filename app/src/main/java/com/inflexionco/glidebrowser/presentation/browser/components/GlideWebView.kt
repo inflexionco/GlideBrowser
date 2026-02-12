@@ -1,6 +1,8 @@
 package com.inflexionco.glidebrowser.presentation.browser.components
 
 import android.graphics.Bitmap
+import android.net.http.SslError
+import android.webkit.SslErrorHandler
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -15,10 +17,14 @@ import com.google.accompanist.web.AccompanistWebViewClient
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewNavigator
 import com.google.accompanist.web.rememberWebViewState
+import com.inflexionco.glidebrowser.domain.model.SslErrorInfo
+import com.inflexionco.glidebrowser.domain.model.SslErrorType
 import com.inflexionco.glidebrowser.domain.model.WebViewEvent
 import com.inflexionco.glidebrowser.presentation.browser.bridge.JavaScriptInjector
 import com.inflexionco.glidebrowser.presentation.browser.bridge.WebViewJavaScriptInterface
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun GlideWebView(
@@ -35,7 +41,8 @@ fun GlideWebView(
     onElementsDetected: (String) -> Unit = {},
     onConsoleLog: (String) -> Unit = {},
     onPageScrolled: (Int, Int) -> Unit = { _, _ -> },
-    onWebViewCreated: (WebView, JavaScriptInjector) -> Unit = { _, _ -> }
+    onWebViewCreated: (WebView, JavaScriptInjector) -> Unit = { _, _ -> },
+    onSslError: (SslErrorInfo, SslErrorHandler) -> Unit = { _, handler -> handler.cancel() }
 ) {
     val context = LocalContext.current
     val state = rememberWebViewState(url = url)
@@ -129,7 +136,41 @@ fun GlideWebView(
                     onError(it.toString())
                 }
             }
+
+            override fun onReceivedSslError(
+                view: WebView,
+                handler: SslErrorHandler,
+                error: SslError
+            ) {
+                Timber.w("SSL Error occurred: ${error.primaryError}")
+                val sslErrorInfo = parseSslError(error, view.url ?: "")
+                onSslError(sslErrorInfo, handler)
+            }
         }
+    )
+}
+
+private fun parseSslError(sslError: SslError, url: String): SslErrorInfo {
+    val errorType = when (sslError.primaryError) {
+        SslError.SSL_NOTYETVALID -> SslErrorType.NOT_YET_VALID
+        SslError.SSL_EXPIRED -> SslErrorType.EXPIRED
+        SslError.SSL_IDMISMATCH -> SslErrorType.ID_MISMATCH
+        SslError.SSL_UNTRUSTED -> SslErrorType.UNTRUSTED
+        SslError.SSL_DATE_INVALID -> SslErrorType.DATE_INVALID
+        SslError.SSL_INVALID -> SslErrorType.INVALID
+        else -> SslErrorType.UNKNOWN
+    }
+
+    val certificate = sslError.certificate
+    val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+
+    return SslErrorInfo(
+        url = url,
+        errorType = errorType,
+        certificateIssuer = certificate.issuedBy?.dName,
+        certificateSubject = certificate.issuedTo?.dName,
+        certificateValidFrom = certificate.validNotBeforeDate?.let { dateFormat.format(it) },
+        certificateValidTo = certificate.validNotAfterDate?.let { dateFormat.format(it) }
     )
 }
 
