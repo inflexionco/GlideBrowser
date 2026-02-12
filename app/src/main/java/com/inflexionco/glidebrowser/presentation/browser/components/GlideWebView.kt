@@ -34,7 +34,8 @@ fun GlideWebView(
     onEventHandled: () -> Unit = {},
     onElementsDetected: (String) -> Unit = {},
     onConsoleLog: (String) -> Unit = {},
-    onPageScrolled: (Int, Int) -> Unit = { _, _ -> }
+    onPageScrolled: (Int, Int) -> Unit = { _, _ -> },
+    onWebViewCreated: (WebView, JavaScriptInjector) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
     val state = rememberWebViewState(url = url)
@@ -94,6 +95,9 @@ fun GlideWebView(
                     title?.let { onTitleChange(it) }
                 }
             }
+
+            // Notify that WebView is ready
+            onWebViewCreated(webView, jsInjector)
         },
         client = object : AccompanistWebViewClient() {
             override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
