@@ -16,6 +16,15 @@ interface HistoryDao {
     @Query("SELECT * FROM history WHERE title LIKE '%' || :query || '%' OR url LIKE '%' || :query || '%' ORDER BY visitCount DESC, visitedAt DESC LIMIT :limit")
     fun searchHistory(query: String, limit: Int = 5): Flow<List<HistoryEntity>>
 
+    @Query("SELECT * FROM history WHERE visitedAt BETWEEN :startTime AND :endTime ORDER BY visitedAt DESC")
+    fun getHistoryByDateRange(startTime: Long, endTime: Long): Flow<List<HistoryEntity>>
+
+    @Query("DELETE FROM history WHERE visitedAt BETWEEN :startTime AND :endTime")
+    suspend fun clearHistoryByDateRange(startTime: Long, endTime: Long)
+
+    @Query("DELETE FROM history WHERE visitedAt < :timestamp")
+    suspend fun clearHistoryOlderThan(timestamp: Long)
+
     @Query("SELECT * FROM history WHERE id = :id")
     suspend fun getHistoryById(id: Long): HistoryEntity?
 
