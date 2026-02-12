@@ -1,5 +1,6 @@
 package com.inflexionco.glidebrowser.presentation.tabs.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,9 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
@@ -31,11 +37,15 @@ import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Glow
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.inflexionco.glidebrowser.domain.model.Tab
 import com.inflexionco.glidebrowser.ui.components.TvIconButton
 import com.inflexionco.glidebrowser.ui.theme.Dimens
+import java.io.File
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -148,31 +158,65 @@ fun TabCard(
 
             Spacer(modifier = Modifier.height(Dimens.spacing8))
 
-            // Tab preview placeholder (could be replaced with actual screenshot in the future)
-            Box(
+            // Tab thumbnail preview
+            TabThumbnail(
+                thumbnailPath = tab.thumbnailPath,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(40.dp)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun TabThumbnail(
+    thumbnailPath: String?,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
+    Box(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.small)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                shape = MaterialTheme.shapes.small
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        if (thumbnailPath != null && File(thumbnailPath).exists()) {
+            // Display actual thumbnail
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(File(thumbnailPath))
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Tab preview",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            // Placeholder for tabs without thumbnails
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 MaterialTheme.colorScheme.surfaceVariant,
                                 MaterialTheme.colorScheme.surface
                             )
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                        shape = MaterialTheme.shapes.small
+                        )
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Tab Preview",
+                    text = "No Preview",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                 )
             }
         }
