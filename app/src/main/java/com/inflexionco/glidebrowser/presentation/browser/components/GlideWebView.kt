@@ -109,15 +109,28 @@ fun GlideWebView(
         client = object : AccompanistWebViewClient() {
             override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
+                Timber.d("=== PAGE STARTED: $url ===")
                 url?.let { onUrlChange(it) }
                 onProgressChange(0)
             }
 
             override fun onPageFinished(view: WebView, url: String?) {
                 super.onPageFinished(view, url)
+                Timber.d("=== PAGE FINISHED: $url ===")
+                Timber.d("Page title: ${view.title}")
+
                 onCanGoBackChange(view.canGoBack())
                 onCanGoForwardChange(view.canGoForward())
                 onProgressChange(100)
+
+                // Trigger onTitleChange even if title wasn't received via onReceivedTitle
+                // This ensures history tracking works for all pages
+                view.title?.let { title ->
+                    if (title.isNotEmpty() && title != url) {
+                        Timber.d("Triggering onTitleChange from onPageFinished: $title")
+                        onTitleChange(title)
+                    }
+                }
 
                 // Inject navigation script and trigger element detection
                 jsInjector.injectNavigationScript(view)
@@ -194,7 +207,9 @@ private fun configureWebView(webView: WebView, jsInterface: WebViewJavaScriptInt
     webView.addJavascriptInterface(jsInterface, WebViewJavaScriptInterface.INTERFACE_NAME)
     Timber.d("JavaScript interface '${WebViewJavaScriptInterface.INTERFACE_NAME}' added to WebView")
 
-    // Disable focus for TV - allows D-pad navigation to reach buttons
-    webView.isFocusable = false
-    webView.isFocusableInTouchMode = false
+    // ENABLE focus for TV - allow WebView to handle D-pad navigation naturally
+    webView.isFocusable = true
+    webView.isFocusableInTouchMode = true
+    webView.requestFocus()
+    Timber.d("WebView focus enabled for native D-pad navigation")
 }

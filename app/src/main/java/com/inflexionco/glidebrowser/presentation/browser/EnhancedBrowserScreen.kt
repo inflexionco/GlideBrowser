@@ -128,19 +128,8 @@ fun EnhancedBrowserScreen(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .onPreviewKeyEvent { keyEvent ->
-                // Handle D-pad navigation
-                webView?.let { wv ->
-                    jsInjector?.let { ji ->
-                        dpadHandler.handleKeyEvent(
-                            keyCode = keyEvent.nativeKeyEvent.keyCode,
-                            event = keyEvent.nativeKeyEvent,
-                            webView = wv,
-                            jsInjector = ji
-                        )
-                    }
-                } ?: false
-            }
+            // DISABLED: Custom D-pad handling - let WebView handle navigation naturally
+            // .onPreviewKeyEvent { ... }
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
