@@ -2,12 +2,14 @@ package com.inflexionco.glidebrowser.di
 
 import com.inflexionco.glidebrowser.data.repository.BookmarkFolderRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.BookmarkRepositoryImpl
+import com.inflexionco.glidebrowser.data.repository.DownloadRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.FavoriteRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.HistoryRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.SettingsRepositoryImpl
 import com.inflexionco.glidebrowser.data.repository.TabRepositoryImpl
 import com.inflexionco.glidebrowser.domain.repository.BookmarkFolderRepository
 import com.inflexionco.glidebrowser.domain.repository.BookmarkRepository
+import com.inflexionco.glidebrowser.domain.repository.DownloadRepository
 import com.inflexionco.glidebrowser.domain.repository.FavoriteRepository
 import com.inflexionco.glidebrowser.domain.repository.HistoryRepository
 import com.inflexionco.glidebrowser.domain.repository.SettingsRepository
@@ -57,4 +59,10 @@ abstract class RepositoryModule {
     abstract fun bindSettingsRepository(
         settingsRepositoryImpl: SettingsRepositoryImpl
     ): SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDownloadRepository(
+        downloadRepositoryImpl: DownloadRepositoryImpl
+    ): DownloadRepository
 }
