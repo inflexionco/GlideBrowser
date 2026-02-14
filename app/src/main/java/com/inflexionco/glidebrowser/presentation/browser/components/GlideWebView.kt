@@ -44,7 +44,8 @@ fun GlideWebView(
     onPageScrolled: (Int, Int) -> Unit = { _, _ -> },
     onWebViewCreated: (WebView, JavaScriptInjector) -> Unit = { _, _ -> },
     onSslError: (SslErrorInfo, SslErrorHandler) -> Unit = { _, handler -> handler.cancel() },
-    onDownloadRequest: (String, String, String?, Long) -> Unit = { _, _, _, _ -> }
+    onDownloadRequest: (String, String, String?, Long) -> Unit = { _, _, _, _ -> },
+    onPageLoadComplete: (WebView) -> Unit = {}
 ) {
     val context = LocalContext.current
     val state = rememberWebViewState(url = url)
@@ -139,6 +140,11 @@ fun GlideWebView(
                 view.postDelayed({
                     jsInjector.detectElements(view)
                 }, 500)
+
+                // Notify that page load is complete (for thumbnail capture)
+                view.postDelayed({
+                    onPageLoadComplete(view)
+                }, 1000) // Wait 1 second for page to fully render
             }
 
             override fun onReceivedError(

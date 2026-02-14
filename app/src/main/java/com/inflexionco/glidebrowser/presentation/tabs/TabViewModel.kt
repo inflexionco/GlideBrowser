@@ -209,6 +209,18 @@ class TabViewModel @Inject constructor(
         }
     }
 
+    fun updateTabThumbnail(tabId: Long, thumbnailPath: String) {
+        viewModelScope.launch {
+            try {
+                Timber.d("Updating tab thumbnail: id=$tabId, path=$thumbnailPath")
+                tabRepository.updateTabThumbnail(tabId, thumbnailPath)
+            } catch (e: Exception) {
+                Timber.e(e, "Error updating tab thumbnail")
+                _state.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
     fun reorderTabs(tabs: List<Tab>) {
         viewModelScope.launch {
             try {

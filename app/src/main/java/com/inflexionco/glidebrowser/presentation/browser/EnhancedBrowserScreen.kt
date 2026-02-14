@@ -34,10 +34,12 @@ import com.inflexionco.glidebrowser.presentation.browser.components.NavigationMo
 import com.inflexionco.glidebrowser.presentation.browser.components.PageLoadingIndicator
 import com.inflexionco.glidebrowser.presentation.browser.navigation.DPadNavigationHandler
 import com.inflexionco.glidebrowser.presentation.tabs.TabViewModel
+import com.inflexionco.glidebrowser.util.WebViewThumbnailUtil
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.launch
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -211,6 +213,21 @@ fun EnhancedBrowserScreen(
                 onWebViewCreated = { wv, ji ->
                     webView = wv
                     jsInjector = ji
+                },
+                onPageLoadComplete = { wv ->
+                    // Capture thumbnail for active tab
+                    tabState.activeTab?.let { activeTab ->
+                        kotlinx.coroutines.GlobalScope.launch {
+                            val thumbnailPath = WebViewThumbnailUtil.captureThumbnail(
+                                context = context,
+                                webView = wv,
+                                tabId = activeTab.id
+                            )
+                            thumbnailPath?.let { path ->
+                                tabViewModel.updateTabThumbnail(activeTab.id, path)
+                            }
+                        }
+                    }
                 }
             )
         }
