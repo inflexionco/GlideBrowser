@@ -34,6 +34,7 @@ fun HomeScreen(
     onNavigateToBrowser: (String?) -> Unit,
     onNavigateToBookmarks: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
+    onNavigateToDownloads: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -86,6 +87,10 @@ fun HomeScreen(
                     text = "History",
                     onClick = onNavigateToHistory,
                     icon = Icons.AutoMirrored.Filled.List
+                )
+                TvButton(
+                    text = "Downloads",
+                    onClick = onNavigateToDownloads
                 )
                 TvButton(
                     text = "Open URL",

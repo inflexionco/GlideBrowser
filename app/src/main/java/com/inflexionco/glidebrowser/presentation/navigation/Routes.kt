@@ -22,4 +22,7 @@ sealed class Routes {
 
     @Serializable
     data object History : Routes()
+
+    @Serializable
+    data object Downloads : Routes()
 }

@@ -20,6 +20,7 @@ import androidx.tv.material3.Text
 import com.inflexionco.glidebrowser.presentation.bookmarks.BookmarksScreen
 import com.inflexionco.glidebrowser.presentation.browser.BrowserScreen
 import com.inflexionco.glidebrowser.presentation.browser.EnhancedBrowserScreen
+import com.inflexionco.glidebrowser.presentation.downloads.DownloadsScreen
 import com.inflexionco.glidebrowser.presentation.history.HistoryScreen
 import com.inflexionco.glidebrowser.presentation.home.HomeScreen
 import com.inflexionco.glidebrowser.presentation.settings.SettingsScreen
@@ -46,6 +47,9 @@ fun NavGraph(
                 },
                 onNavigateToHistory = {
                     navController.navigate(Routes.History)
+                },
+                onNavigateToDownloads = {
+                    navController.navigate(Routes.Downloads)
                 }
             )
         }
@@ -104,6 +108,12 @@ fun NavGraph(
                         popUpTo(Routes.Home) { inclusive = false }
                     }
                 }
+            )
+        }
+
+        composable<Routes.Downloads> {
+            DownloadsScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }
