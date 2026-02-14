@@ -2,6 +2,7 @@ package com.inflexionco.glidebrowser.presentation.browser.components
 
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.webkit.DownloadListener
 import android.webkit.SslErrorHandler
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -42,7 +43,8 @@ fun GlideWebView(
     onConsoleLog: (String) -> Unit = {},
     onPageScrolled: (Int, Int) -> Unit = { _, _ -> },
     onWebViewCreated: (WebView, JavaScriptInjector) -> Unit = { _, _ -> },
-    onSslError: (SslErrorInfo, SslErrorHandler) -> Unit = { _, handler -> handler.cancel() }
+    onSslError: (SslErrorInfo, SslErrorHandler) -> Unit = { _, handler -> handler.cancel() },
+    onDownloadRequest: (String, String, String?, Long) -> Unit = { _, _, _, _ -> }
 ) {
     val context = LocalContext.current
     val state = rememberWebViewState(url = url)
@@ -92,7 +94,7 @@ fun GlideWebView(
         navigator = navigator,
         modifier = modifier,
         onCreated = { webView ->
-            configureWebView(webView, jsInterface)
+            configureWebView(webView, jsInterface, onDownloadRequest)
             webView.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
                     onProgressChange(newProgress)
@@ -187,7 +189,11 @@ private fun parseSslError(sslError: SslError, url: String): SslErrorInfo {
     )
 }
 
-private fun configureWebView(webView: WebView, jsInterface: WebViewJavaScriptInterface) {
+private fun configureWebView(
+    webView: WebView,
+    jsInterface: WebViewJavaScriptInterface,
+    onDownloadRequest: (String, String, String?, Long) -> Unit
+) {
     webView.settings.apply {
         javaScriptEnabled = true
         domStorageEnabled = true
@@ -207,9 +213,36 @@ private fun configureWebView(webView: WebView, jsInterface: WebViewJavaScriptInt
     webView.addJavascriptInterface(jsInterface, WebViewJavaScriptInterface.INTERFACE_NAME)
     Timber.d("JavaScript interface '${WebViewJavaScriptInterface.INTERFACE_NAME}' added to WebView")
 
+    // Set up download listener
+    webView.setDownloadListener { url, userAgent, contentDisposition, mimeType, contentLength ->
+        Timber.d("Download requested: URL=$url, MimeType=$mimeType, Size=$contentLength")
+
+        // Extract filename from content disposition or URL
+        val filename = extractFilename(contentDisposition, url)
+
+        onDownloadRequest(url, filename, mimeType, contentLength)
+    }
+    Timber.d("Download listener configured")
+
     // ENABLE focus for TV - allow WebView to handle D-pad navigation naturally
     webView.isFocusable = true
     webView.isFocusableInTouchMode = true
     webView.requestFocus()
     Timber.d("WebView focus enabled for native D-pad navigation")
+}
+
+private fun extractFilename(contentDisposition: String?, url: String): String {
+    // Try to extract filename from Content-Disposition header
+    contentDisposition?.let {
+        val filenameRegex = "filename=\"?([^\"]+)\"?".toRegex()
+        val matchResult = filenameRegex.find(it)
+        matchResult?.groupValues?.getOrNull(1)?.let { filename ->
+            return filename
+        }
+    }
+
+    // Fall back to extracting from URL
+    return url.substringAfterLast("/").substringBefore("?").ifEmpty {
+        "download_${System.currentTimeMillis()}"
+    }
 }
