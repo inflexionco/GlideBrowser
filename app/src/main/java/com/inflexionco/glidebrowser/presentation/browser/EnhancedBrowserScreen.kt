@@ -35,11 +35,13 @@ import com.inflexionco.glidebrowser.presentation.browser.components.PageLoadingI
 import com.inflexionco.glidebrowser.presentation.browser.navigation.DPadNavigationHandler
 import com.inflexionco.glidebrowser.presentation.tabs.TabViewModel
 import com.inflexionco.glidebrowser.util.WebViewThumbnailUtil
+import com.inflexionco.glidebrowser.util.VoiceInputHelper
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.launch
+import androidx.activity.ComponentActivity
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -84,6 +86,17 @@ fun EnhancedBrowserScreen(
 
     // Mode indicator visibility timer
     var showModeIndicator by remember { mutableStateOf(false) }
+
+    // Voice input helper
+    val voiceInputHelper = remember(context) {
+        val activity = context as? ComponentActivity
+        activity?.let {
+            VoiceInputHelper(it) { spokenText ->
+                // Handle voice input result
+                webViewViewModel.loadUrl(spokenText)
+            }
+        }
+    }
 
     // Get screen dimensions for viewport
     val configuration = LocalConfiguration.current
@@ -155,7 +168,10 @@ fun EnhancedBrowserScreen(
                 onBookmarkClick = {
                     bookmarkViewModel.toggleBookmark(webViewState.title, webViewState.url)
                 },
-                onMenuClick = onNavigateToMenu
+                onMenuClick = onNavigateToMenu,
+                onVoiceClick = {
+                    voiceInputHelper?.startVoiceInput("Say URL or search term")
+                }
             )
 
             // Loading Progress Indicator

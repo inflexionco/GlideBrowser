@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -115,6 +116,7 @@ internal fun AddressBarInternal(
     onNewTabClick: () -> Unit = {},
     onBookmarkClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
+    onVoiceClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var textFieldValue by remember(url) { mutableStateOf(url) }
@@ -153,6 +155,36 @@ internal fun AddressBarInternal(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // Voice input button - First in search bar
+                val voiceInteractionSource = remember { MutableInteractionSource() }
+                val isVoiceFocused by voiceInteractionSource.collectIsFocusedAsState()
+
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(
+                            color = if (isVoiceFocused)
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            else
+                                androidx.compose.ui.graphics.Color.Transparent,
+                            shape = CircleShape
+                        )
+                        .clickable(
+                            interactionSource = voiceInteractionSource,
+                            indication = null
+                        ) { onVoiceClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Voice input",
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(Dimens.spacing8))
+
                 // URL Text Field
                 BasicTextField(
                     value = textFieldValue,

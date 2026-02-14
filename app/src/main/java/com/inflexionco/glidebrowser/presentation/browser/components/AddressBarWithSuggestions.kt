@@ -29,6 +29,7 @@ fun AddressBarWithSuggestions(
     onNewTabClick: () -> Unit = {},
     onBookmarkClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
+    onVoiceClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     suggestionViewModel: SuggestionViewModel = hiltViewModel()
 ) {
@@ -63,7 +64,8 @@ fun AddressBarWithSuggestions(
                 onTabsClick = onTabsClick,
                 onNewTabClick = onNewTabClick,
                 onBookmarkClick = onBookmarkClick,
-                onMenuClick = onMenuClick
+                onMenuClick = onMenuClick,
+                onVoiceClick = onVoiceClick
             )
 
             // URL Suggestions
