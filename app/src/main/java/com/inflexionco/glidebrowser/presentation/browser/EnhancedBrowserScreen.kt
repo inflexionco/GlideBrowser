@@ -35,13 +35,18 @@ import com.inflexionco.glidebrowser.presentation.browser.components.PageLoadingI
 import com.inflexionco.glidebrowser.presentation.browser.navigation.DPadNavigationHandler
 import com.inflexionco.glidebrowser.presentation.tabs.TabViewModel
 import com.inflexionco.glidebrowser.util.WebViewThumbnailUtil
-import com.inflexionco.glidebrowser.util.VoiceInputHelper
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.launch
-import androidx.activity.ComponentActivity
+import android.app.Activity
+import android.content.Intent
+import android.speech.RecognizerIntent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import timber.log.Timber
+import java.util.Locale
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -87,13 +92,39 @@ fun EnhancedBrowserScreen(
     // Mode indicator visibility timer
     var showModeIndicator by remember { mutableStateOf(false) }
 
-    // Voice input helper
-    val voiceInputHelper = remember(context) {
-        val activity = context as? ComponentActivity
-        activity?.let {
-            VoiceInputHelper(it) { spokenText ->
-                // Handle voice input result
+    // Voice input launcher - using Compose-safe approach
+    val voiceLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val matches = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spokenText = matches?.firstOrNull()
+
+            if (!spokenText.isNullOrBlank()) {
+                Timber.d("Voice input received: $spokenText")
                 webViewViewModel.loadUrl(spokenText)
+            } else {
+                Timber.w("Voice input was empty")
+            }
+        } else {
+            Timber.w("Voice input cancelled or failed: resultCode=${result.resultCode}")
+        }
+    }
+
+    val startVoiceInput = remember {
+        {
+            try {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    putExtra(RecognizerIntent.EXTRA_PROMPT, "Say URL or search term")
+                    putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+                    putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, false)
+                }
+                Timber.d("Starting voice input")
+                voiceLauncher.launch(intent)
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to start voice input")
             }
         }
     }
@@ -169,9 +200,7 @@ fun EnhancedBrowserScreen(
                     bookmarkViewModel.toggleBookmark(webViewState.title, webViewState.url)
                 },
                 onMenuClick = onNavigateToMenu,
-                onVoiceClick = {
-                    voiceInputHelper?.startVoiceInput("Say URL or search term")
-                }
+                onVoiceClick = startVoiceInput
             )
 
             // Loading Progress Indicator
