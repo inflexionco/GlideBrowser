@@ -2,6 +2,7 @@ package com.inflexionco.glidebrowser.presentation.browser.components
 
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.view.View
 import android.webkit.DownloadListener
 import android.webkit.SslErrorHandler
 import android.webkit.WebChromeClient
@@ -45,7 +46,8 @@ fun GlideWebView(
     onWebViewCreated: (WebView, JavaScriptInjector) -> Unit = { _, _ -> },
     onSslError: (SslErrorInfo, SslErrorHandler) -> Unit = { _, handler -> handler.cancel() },
     onDownloadRequest: (String, String, String?, Long) -> Unit = { _, _, _, _ -> },
-    onPageLoadComplete: (WebView) -> Unit = {}
+    onPageLoadComplete: (WebView) -> Unit = {},
+    onFullscreenRequest: (Boolean, View?) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
     val state = rememberWebViewState(url = url)
@@ -103,6 +105,17 @@ fun GlideWebView(
 
                 override fun onReceivedTitle(view: WebView?, title: String?) {
                     title?.let { onTitleChange(it) }
+                }
+
+                // Handle fullscreen video requests
+                override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                    Timber.d("Fullscreen requested")
+                    onFullscreenRequest(true, view)
+                }
+
+                override fun onHideCustomView() {
+                    Timber.d("Fullscreen exit requested")
+                    onFullscreenRequest(false, null)
                 }
             }
 
