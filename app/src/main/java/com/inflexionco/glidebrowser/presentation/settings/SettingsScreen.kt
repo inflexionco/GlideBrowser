@@ -197,6 +197,68 @@ fun SettingsScreen(
                 )
             }
 
+            // Downloads Section
+            item {
+                SettingSectionHeader(title = "Downloads")
+            }
+
+            item {
+                SettingTextItem(
+                    title = "Download Location",
+                    value = "Internal Storage/Downloads",
+                    description = "Where downloaded files are saved"
+                )
+            }
+
+            item {
+                SettingToggleItem(
+                    title = "Ask Where to Save Files",
+                    description = "Prompt for location before each download",
+                    checked = false,
+                    onCheckedChange = { /* TODO: Implement */ }
+                )
+            }
+
+            item {
+                SettingToggleItem(
+                    title = "Download Notifications",
+                    description = "Show notifications for download progress",
+                    checked = true,
+                    onCheckedChange = { /* TODO: Implement */ }
+                )
+            }
+
+            // Display Section
+            item {
+                SettingSectionHeader(title = "Display")
+            }
+
+            item {
+                SettingToggleItem(
+                    title = "Fullscreen Mode",
+                    description = "Hide status and navigation bars for immersive browsing",
+                    checked = false,
+                    onCheckedChange = { /* TODO: Implement */ }
+                )
+            }
+
+            item {
+                SettingTextItem(
+                    title = "Display Resolution",
+                    value = "Optimized for TV (1080p)",
+                    description = "Automatic display optimization based on your TV"
+                )
+            }
+
+            item {
+                SettingToggleItem(
+                    title = "Desktop Mode",
+                    description = "Request desktop versions of websites",
+                    checked = false,
+                    onCheckedChange = { /* TODO: Implement */ }
+                )
+            }
+
             // Advanced Section
             item {
                 SettingSectionHeader(title = "Advanced")
