@@ -41,6 +41,9 @@ class SettingsRepositoryImpl @Inject constructor(
         val TEXT_SCALE = floatPreferencesKey("text_scale")
         val FORCE_ZOOM_ENABLED = booleanPreferencesKey("force_zoom_enabled")
 
+        // Display
+        val DESKTOP_MODE = booleanPreferencesKey("desktop_mode")
+
         // Advanced
         val ENABLE_JAVASCRIPT = booleanPreferencesKey("enable_javascript")
         val ENABLE_DOM_STORAGE = booleanPreferencesKey("enable_dom_storage")
@@ -70,6 +73,9 @@ class SettingsRepositoryImpl @Inject constructor(
                 // Appearance
                 textScale = preferences[PreferencesKeys.TEXT_SCALE] ?: 1.0f,
                 forceZoomEnabled = preferences[PreferencesKeys.FORCE_ZOOM_ENABLED] ?: true,
+
+                // Display
+                desktopMode = preferences[PreferencesKeys.DESKTOP_MODE] ?: true,
 
                 // Advanced
                 enableJavaScript = preferences[PreferencesKeys.ENABLE_JAVASCRIPT] ?: true,
@@ -132,6 +138,12 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun setForceZoomEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.FORCE_ZOOM_ENABLED] = enabled
+        }
+    }
+
+    override suspend fun setDesktopMode(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DESKTOP_MODE] = enabled
         }
     }
 

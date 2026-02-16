@@ -24,6 +24,9 @@ interface SettingsRepository {
     suspend fun setTextScale(scale: Float)
     suspend fun setForceZoomEnabled(enabled: Boolean)
 
+    // Display settings
+    suspend fun setDesktopMode(enabled: Boolean)
+
     // Advanced settings
     suspend fun setEnableJavaScript(enabled: Boolean)
     suspend fun setEnableDomStorage(enabled: Boolean)

@@ -254,8 +254,8 @@ fun SettingsScreen(
                 SettingToggleItem(
                     title = "Desktop Mode",
                     description = "Request desktop versions of websites",
-                    checked = false,
-                    onCheckedChange = { /* TODO: Implement */ }
+                    checked = preferences.desktopMode,
+                    onCheckedChange = { viewModel.setDesktopMode(it) }
                 )
             }
 

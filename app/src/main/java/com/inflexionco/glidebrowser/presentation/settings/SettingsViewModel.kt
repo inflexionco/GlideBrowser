@@ -152,6 +152,18 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    // Display settings
+    fun setDesktopMode(enabled: Boolean) {
+        viewModelScope.launch {
+            try {
+                settingsRepository.setDesktopMode(enabled)
+                Timber.d("Desktop mode enabled: $enabled")
+            } catch (e: Exception) {
+                Timber.e(e, "Error setting desktop mode")
+            }
+        }
+    }
+
     // Advanced settings
     fun setEnableJavaScript(enabled: Boolean) {
         viewModelScope.launch {

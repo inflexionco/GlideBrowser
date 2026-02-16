@@ -19,6 +19,9 @@ data class UserPreferences(
     val textScale: Float = 1.0f, // 0.8 to 1.5
     val forceZoomEnabled: Boolean = true,
 
+    // Display
+    val desktopMode: Boolean = true, // Request desktop sites by default on TV
+
     // Advanced
     val enableJavaScript: Boolean = true,
     val enableDomStorage: Boolean = true,
