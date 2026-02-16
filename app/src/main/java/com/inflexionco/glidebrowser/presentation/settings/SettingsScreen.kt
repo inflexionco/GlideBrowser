@@ -175,6 +175,21 @@ fun SettingsScreen(
                 )
             }
 
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimens.spacing8),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    TvButton(
+                        text = "Clear All Browsing Data",
+                        onClick = { viewModel.clearAllBrowsingData() },
+                        enabled = !isLoading
+                    )
+                }
+            }
+
             // Appearance Section
             item {
                 SettingSectionHeader(title = "Appearance")
