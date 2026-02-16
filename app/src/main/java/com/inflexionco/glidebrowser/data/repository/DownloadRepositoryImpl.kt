@@ -5,6 +5,7 @@ import com.inflexionco.glidebrowser.data.local.entity.DownloadEntity
 import com.inflexionco.glidebrowser.data.local.entity.DownloadStatus
 import com.inflexionco.glidebrowser.domain.model.DownloadItem
 import com.inflexionco.glidebrowser.domain.repository.DownloadRepository
+import com.inflexionco.glidebrowser.util.DownloadNotificationManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
@@ -13,7 +14,8 @@ import javax.inject.Singleton
 
 @Singleton
 class DownloadRepositoryImpl @Inject constructor(
-    private val downloadDao: DownloadDao
+    private val downloadDao: DownloadDao,
+    private val notificationManager: DownloadNotificationManager
 ) : DownloadRepository {
 
     override fun getAllDownloads(): Flow<List<DownloadItem>> {
@@ -66,6 +68,24 @@ class DownloadRepositoryImpl @Inject constructor(
 
     override suspend fun updateDownloadProgress(id: Long, downloadedSize: Long, status: DownloadStatus) {
         downloadDao.updateDownloadProgress(id, downloadedSize, status)
+
+        // Update notification
+        val download = downloadDao.getDownloadById(id)
+        if (download != null) {
+            val progress = if (download.fileSize > 0) {
+                ((downloadedSize.toFloat() / download.fileSize) * 100).toInt()
+            } else {
+                0
+            }
+            notificationManager.updateDownloadNotification(
+                downloadId = id,
+                fileName = download.fileName,
+                status = status,
+                progress = progress,
+                downloadedSize = downloadedSize,
+                totalSize = download.fileSize
+            )
+        }
     }
 
     override suspend fun markDownloadCompleted(id: Long, filePath: String) {
@@ -76,26 +96,77 @@ class DownloadRepositoryImpl @Inject constructor(
             filePath = filePath
         )
         Timber.d("Download completed: $id -> $filePath")
+
+        // Show completion notification
+        val download = downloadDao.getDownloadById(id)
+        if (download != null) {
+            notificationManager.showDownloadCompleted(id, download.fileName)
+        }
     }
 
     override suspend fun markDownloadFailed(id: Long, errorMessage: String) {
         downloadDao.markDownloadFailed(id, DownloadStatus.FAILED, errorMessage)
         Timber.e("Download failed: $id - $errorMessage")
+
+        // Show failure notification
+        val download = downloadDao.getDownloadById(id)
+        if (download != null) {
+            notificationManager.showDownloadFailed(id, download.fileName, errorMessage)
+        }
     }
 
     override suspend fun pauseDownload(id: Long) {
         downloadDao.updateDownloadStatus(id, DownloadStatus.PAUSED)
         Timber.d("Download paused: $id")
+
+        // Update notification to paused state
+        val download = downloadDao.getDownloadById(id)
+        if (download != null) {
+            val progress = if (download.fileSize > 0) {
+                ((download.downloadedSize.toFloat() / download.fileSize) * 100).toInt()
+            } else {
+                0
+            }
+            notificationManager.updateDownloadNotification(
+                downloadId = id,
+                fileName = download.fileName,
+                status = DownloadStatus.PAUSED,
+                progress = progress,
+                downloadedSize = download.downloadedSize,
+                totalSize = download.fileSize
+            )
+        }
     }
 
     override suspend fun resumeDownload(id: Long) {
         downloadDao.updateDownloadStatus(id, DownloadStatus.DOWNLOADING)
         Timber.d("Download resumed: $id")
+
+        // Update notification to downloading state
+        val download = downloadDao.getDownloadById(id)
+        if (download != null) {
+            val progress = if (download.fileSize > 0) {
+                ((download.downloadedSize.toFloat() / download.fileSize) * 100).toInt()
+            } else {
+                0
+            }
+            notificationManager.updateDownloadNotification(
+                downloadId = id,
+                fileName = download.fileName,
+                status = DownloadStatus.DOWNLOADING,
+                progress = progress,
+                downloadedSize = download.downloadedSize,
+                totalSize = download.fileSize
+            )
+        }
     }
 
     override suspend fun cancelDownload(id: Long) {
         downloadDao.updateDownloadStatus(id, DownloadStatus.CANCELLED)
         Timber.d("Download cancelled: $id")
+
+        // Cancel notification
+        notificationManager.cancelNotification(id)
     }
 
     override suspend fun deleteDownload(id: Long) {
