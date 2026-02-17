@@ -33,6 +33,7 @@ import com.inflexionco.glidebrowser.presentation.browser.components.GlideWebView
 import com.inflexionco.glidebrowser.presentation.browser.components.NavigationModeIndicator
 import com.inflexionco.glidebrowser.presentation.browser.components.PageLoadingIndicator
 import com.inflexionco.glidebrowser.presentation.browser.navigation.DPadNavigationHandler
+ import com.inflexionco.glidebrowser.ui.components.SideNavigationDrawer
 import com.inflexionco.glidebrowser.presentation.tabs.TabViewModel
 import com.inflexionco.glidebrowser.util.WebViewThumbnailUtil
 import dagger.hilt.android.EntryPointAccessors
@@ -61,6 +62,11 @@ fun EnhancedBrowserScreen(
     initialUrl: String = "https://www.google.com",
     onNavigateToTabs: () -> Unit = {},
     onNavigateToMenu: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
+    onNavigateToHistory: () -> Unit = {},
+    onNavigateToBookmarks: () -> Unit = {},
+    onNavigateToDownloads: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     onCreateNewTab: () -> Unit = {},
     modifier: Modifier = Modifier,
     webViewViewModel: WebViewViewModel = hiltViewModel(),
@@ -91,6 +97,9 @@ fun EnhancedBrowserScreen(
 
     // Mode indicator visibility timer
     var showModeIndicator by remember { mutableStateOf(false) }
+
+    // Side navigation drawer state
+    var isDrawerVisible by remember { mutableStateOf(false) }
 
     // Voice input launcher - using Compose-safe approach
     val voiceLauncher = rememberLauncherForActivityResult(
@@ -199,7 +208,7 @@ fun EnhancedBrowserScreen(
                 onBookmarkClick = {
                     bookmarkViewModel.toggleBookmark(webViewState.title, webViewState.url)
                 },
-                onMenuClick = onNavigateToMenu,
+                onMenuClick = { isDrawerVisible = true },
                 onVoiceClick = startVoiceInput
             )
 
@@ -286,6 +295,31 @@ fun EnhancedBrowserScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
+        )
+
+        // Side Navigation Drawer (overlay)
+        SideNavigationDrawer(
+            isVisible = isDrawerVisible,
+            onDismiss = { isDrawerVisible = false },
+            onNavigateToHome = {
+                onNavigateToHome()
+            },
+            onNavigateToTabs = {
+                onNavigateToTabs()
+            },
+            onNavigateToHistory = {
+                onNavigateToHistory()
+            },
+            onNavigateToBookmarks = {
+                onNavigateToBookmarks()
+            },
+            onNavigateToDownloads = {
+                onNavigateToDownloads()
+            },
+            onNavigateToSettings = {
+                onNavigateToSettings()
+            },
+            modifier = Modifier.align(Alignment.CenterStart)
         )
     }
 }
