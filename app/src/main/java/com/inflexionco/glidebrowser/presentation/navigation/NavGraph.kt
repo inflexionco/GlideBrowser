@@ -63,6 +63,23 @@ fun NavGraph(
                 },
                 onNavigateToMenu = {
                     navController.navigate(Routes.Settings)
+                },
+                onNavigateToHome = {
+                    navController.navigate(Routes.Home) {
+                        popUpTo(Routes.Home) { inclusive = true }
+                    }
+                },
+                onNavigateToHistory = {
+                    navController.navigate(Routes.History)
+                },
+                onNavigateToBookmarks = {
+                    navController.navigate(Routes.Bookmarks)
+                },
+                onNavigateToDownloads = {
+                    navController.navigate(Routes.Downloads)
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Routes.Settings)
                 }
             )
         }
