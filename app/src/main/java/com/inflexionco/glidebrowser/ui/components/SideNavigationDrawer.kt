@@ -149,7 +149,7 @@ private data class NavigationItem(
  * List of navigation items
  */
 private val navigationItems = listOf(
-    NavigationItem("Home", Icons.Default.Home, "home"),
+    NavigationItem("Quick Access", Icons.Default.Home, "home"),
     NavigationItem("Tabs", Icons.Default.List, "tabs"),
     NavigationItem("History", Icons.Default.Info, "history"),
     NavigationItem("Bookmarks", Icons.Default.Star, "bookmarks"),
