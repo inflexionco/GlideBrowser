@@ -18,6 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -128,15 +131,24 @@ internal fun AddressBarInternal(
             .fillMaxWidth()
             .height(Dimens.urlBarHeight)
             .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = Dimens.spacing16, vertical = Dimens.spacing8),
+            .padding(horizontal = Dimens.spacing16, vertical = Dimens.spacing8)
+            .onPreviewKeyEvent { keyEvent ->
+                // Open menu on left D-pad key press
+                if (keyEvent.key == Key.DirectionLeft) {
+                    onMenuClick()
+                    true
+                } else {
+                    false
+                }
+            },
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacing8),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 1. Home button - First position
+        // 1. Menu button - First position (opens navigation drawer)
         TvIconButton(
-            onClick = onHomeClick,
-            icon = Icons.Default.Home,
-            contentDescription = "Go home"
+            onClick = onMenuClick,
+            icon = Icons.Default.Menu,
+            contentDescription = "Open menu"
         )
 
         // 2. Search bar (URL TextField) with bookmark button - Second position
@@ -296,13 +308,6 @@ internal fun AddressBarInternal(
             onClick = onNewTabClick,
             icon = Icons.Default.Add,
             contentDescription = "New tab"
-        )
-
-        // 7. Menu button - Seventh position (for accessing Bookmarks/History)
-        TvIconButton(
-            onClick = onMenuClick,
-            icon = Icons.Default.Menu,
-            contentDescription = "Menu"
         )
     }
 

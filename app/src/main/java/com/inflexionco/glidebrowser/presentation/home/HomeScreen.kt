@@ -41,10 +41,13 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     val firstCardFocusRequester = remember { FocusRequester() }
+    val startBrowsingFocusRequester = remember { FocusRequester() }
 
-    // Request focus on first card when screen loads
+    // Request focus on start browsing button or first card when screen loads
     LaunchedEffect(uiState.favorites) {
-        if (uiState.favorites.isNotEmpty()) {
+        if (uiState.favorites.isEmpty() && uiState.mostVisited.isEmpty()) {
+            startBrowsingFocusRequester.requestFocus()
+        } else if (uiState.favorites.isNotEmpty()) {
             firstCardFocusRequester.requestFocus()
         }
     }
@@ -56,17 +59,31 @@ fun HomeScreen(
             .padding(Dimens.spacing24)
     ) {
         // Header
-        Column {
-            Text(
-                text = "Glide Browser",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = "Quick Access",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                modifier = Modifier.padding(top = Dimens.spacing4)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Glide Browser",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "Quick Access",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(top = Dimens.spacing4)
+                )
+            }
+
+            // Start Browsing button
+            TvButton(
+                text = "Start Browsing",
+                onClick = { onNavigateToBrowser("https://www.google.com") },
+                icon = Icons.Default.Search,
+                modifier = Modifier.focusRequester(startBrowsingFocusRequester)
             )
         }
 
