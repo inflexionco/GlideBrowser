@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.tv.material3.*
 import com.inflexionco.glidebrowser.ui.theme.Dimens
 
@@ -59,7 +62,16 @@ fun SideNavigationDrawer(
                 .fillMaxHeight()
                 .width(Dimens.navigationDrawerWidth)
                 .background(MaterialTheme.colorScheme.surface)
-                .focusGroup(),
+                .focusGroup()
+                .onPreviewKeyEvent { keyEvent ->
+                    // Close drawer on right D-pad key press
+                    if (keyEvent.key == Key.DirectionRight) {
+                        onDismiss()
+                        true
+                    } else {
+                        false
+                    }
+                },
             shape = MaterialTheme.shapes.medium
         ) {
             Column(
