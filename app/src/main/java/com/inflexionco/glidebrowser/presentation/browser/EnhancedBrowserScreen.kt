@@ -2,6 +2,7 @@ package com.inflexionco.glidebrowser.presentation.browser
 
 import android.view.KeyEvent
 import android.webkit.WebView
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -100,6 +101,11 @@ fun EnhancedBrowserScreen(
 
     // Side navigation drawer state
     var isDrawerVisible by remember { mutableStateOf(false) }
+
+    // Handle back press when drawer is visible - only dismiss drawer, don't navigate back
+    BackHandler(enabled = isDrawerVisible) {
+        isDrawerVisible = false
+    }
 
     // Voice input launcher - using Compose-safe approach
     val voiceLauncher = rememberLauncherForActivityResult(

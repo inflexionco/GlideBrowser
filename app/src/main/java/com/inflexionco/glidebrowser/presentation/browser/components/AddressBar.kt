@@ -126,6 +126,9 @@ internal fun AddressBarInternal(
     var isEditing by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
+    val menuButtonInteractionSource = remember { MutableInteractionSource() }
+    val isMenuButtonFocused by menuButtonInteractionSource.collectIsFocusedAsState()
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -133,8 +136,8 @@ internal fun AddressBarInternal(
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = Dimens.spacing16, vertical = Dimens.spacing8)
             .onPreviewKeyEvent { keyEvent ->
-                // Open menu on left D-pad key press
-                if (keyEvent.key == Key.DirectionLeft) {
+                // Open menu on left D-pad key press only when menu button is focused
+                if (keyEvent.key == Key.DirectionLeft && isMenuButtonFocused) {
                     onMenuClick()
                     true
                 } else {
@@ -148,7 +151,8 @@ internal fun AddressBarInternal(
         TvIconButton(
             onClick = onMenuClick,
             icon = Icons.Default.Menu,
-            contentDescription = "Open menu"
+            contentDescription = "Open menu",
+            interactionSource = menuButtonInteractionSource
         )
 
         // 2. Search bar (URL TextField) with bookmark button - Second position
