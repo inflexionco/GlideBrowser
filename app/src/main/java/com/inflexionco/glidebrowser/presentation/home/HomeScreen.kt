@@ -56,48 +56,18 @@ fun HomeScreen(
             .padding(Dimens.spacing24)
     ) {
         // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "Glide Browser",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = "Quick Access",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(top = Dimens.spacing4)
-                )
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Dimens.spacing8)
-            ) {
-                TvButton(
-                    text = "Bookmarks",
-                    onClick = onNavigateToBookmarks,
-                    icon = Icons.Default.Star
-                )
-                TvButton(
-                    text = "History",
-                    onClick = onNavigateToHistory,
-                    icon = Icons.AutoMirrored.Filled.List
-                )
-                TvButton(
-                    text = "Downloads",
-                    onClick = onNavigateToDownloads
-                )
-                TvButton(
-                    text = "Open URL",
-                    onClick = { onNavigateToBrowser("https://www.google.com") },
-                    icon = Icons.Default.Search
-                )
-            }
+        Column {
+            Text(
+                text = "Glide Browser",
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = "Quick Access",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                modifier = Modifier.padding(top = Dimens.spacing4)
+            )
         }
 
         Spacer(modifier = Modifier.height(Dimens.spacing32))
